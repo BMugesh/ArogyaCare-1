@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation"
 import { ExternalLink, Search, Newspaper } from "lucide-react"
 import Navbar from "@/components/navbar"
 import Footer from "@/components/footer"
+import { API_ENDPOINTS } from "@/lib/config"
 
 interface NewsArticle {
   title: string
@@ -215,7 +216,7 @@ export default function NewsHelp() {
       const timeoutId = setTimeout(() => controller.abort(), 20000) // 20 second timeout
 
       // Fetch news from the API
-      const res = await fetch("http://127.0.0.1:5000/news", {
+      const res = await fetch(API_ENDPOINTS.NEWS, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ language }),
