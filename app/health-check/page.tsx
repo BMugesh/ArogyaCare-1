@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import { useRouter } from "next/navigation"
 import { motion, AnimatePresence } from "framer-motion"
+import { API_ENDPOINTS } from "@/lib/config"
 import {
   Bot,
   Send,
@@ -161,7 +162,7 @@ export default function HealthCheck() {
       const controller = new AbortController()
       const timeoutId = setTimeout(() => controller.abort(), 15000) // 15 second timeout
 
-      const res = await fetch("http://127.0.0.1:5000/ask", {
+      const res = await fetch(API_ENDPOINTS.ASK, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ question: input }),
