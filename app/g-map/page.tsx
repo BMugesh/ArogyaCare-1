@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 import Navbar from "@/components/navbar"
 import Footer from "@/components/footer"
 import dynamic from "next/dynamic"
+import { API_ENDPOINTS } from "@/lib/config"
 
 // Dynamically import Leaflet map component to avoid SSR issues
 const LeafletMap = dynamic(() => import("@/components/LeafletMap"), {
@@ -46,7 +47,7 @@ export default function GMap() {
     setLoading(true)
     try {
       setError(null) // Clear previous errors
-      const response = await fetch(`http://localhost:5000/health-centers`, {
+      const response = await fetch(API_ENDPOINTS.HEALTH_CENTERS, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
