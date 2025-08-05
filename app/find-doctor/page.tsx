@@ -8,6 +8,7 @@ import Navbar from "@/components/navbar"
 import Footer from "@/components/footer"
 import Link from "next/link"
 import dynamic from "next/dynamic"
+import { API_ENDPOINTS } from "@/lib/config"
 
 // Dynamically import map component to avoid SSR issues
 const HealthCentersMap = dynamic(() => import("@/app/components/HealthCentersMap"), {
@@ -27,7 +28,7 @@ export default function FindDoctor() {
   const handleFindDoctors = async () => {
     setLoading(true)
     try {
-      const res = await fetch("http://127.0.0.1:5000/doctors", {
+      const res = await fetch(API_ENDPOINTS.DOCTORS, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ condition, location }),
