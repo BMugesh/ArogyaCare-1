@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react"
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet"
 import "leaflet/dist/leaflet.css"
+import { API_ENDPOINTS } from "@/lib/config"
 
 // Fix for Leaflet marker icons in Next.js
 import L from "leaflet"
@@ -52,7 +53,7 @@ export default function HealthCentersMapComponent({ onHealthCentersUpdate }: Hea
     setLoading(true)
     setError(null)
     try {
-      const response = await fetch('http://localhost:5000/health-centers', {
+      const response = await fetch(API_ENDPOINTS.HEALTH_CENTERS, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
