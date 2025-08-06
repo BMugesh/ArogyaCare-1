@@ -23,58 +23,58 @@ export default function HealthInsights() {
   return (
     <div className="relative z-10 min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900" suppressHydrationWarning>
       <Navbar />
-      <main className="container mx-auto px-4 py-12">
+      <main className="container mx-auto px-3 sm:px-4 lg:px-6 py-6 sm:py-12">
         <motion.div
           initial={{ opacity: 0, y: -50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="text-center mb-12"
+          className="text-center mb-8 sm:mb-12"
         >
-          <h1 className="text-4xl font-bold mb-4">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4 text-white px-2">
             Health Insights: India's Healthcare Analytics (2005-2025)
           </h1>
-          <p className="text-lg text-gray-300 max-w-4xl mx-auto">
+          <p className="text-sm sm:text-base lg:text-lg text-gray-300 max-w-4xl mx-auto px-2">
             Comprehensive analysis of India's healthcare progress, urban-rural disparities,
             and health outcomes based on real data from WHO, ICMR, and government reports.
           </p>
         </motion.div>
 
         <Tabs defaultValue="disparity" className="w-full" onValueChange={setActiveTab}>
-          <TabsList className="grid w-full grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-1">
-            <TabsTrigger value="disparity" className="text-xs sm:text-sm">
+          <TabsList className="grid w-full grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-1 p-1">
+            <TabsTrigger value="disparity" className="text-xs sm:text-sm p-2 min-h-[40px]">
               Urban-Rural
             </TabsTrigger>
-            <TabsTrigger value="conditions" className="text-xs sm:text-sm">
+            <TabsTrigger value="conditions" className="text-xs sm:text-sm p-2 min-h-[40px]">
               Disease Burden
             </TabsTrigger>
-            <TabsTrigger value="life-expectancy" className="text-xs sm:text-sm">
+            <TabsTrigger value="life-expectancy" className="text-xs sm:text-sm p-2 min-h-[40px]">
               Life Expectancy
             </TabsTrigger>
-            <TabsTrigger value="child-mortality" className="text-xs sm:text-sm">
+            <TabsTrigger value="child-mortality" className="text-xs sm:text-sm p-2 min-h-[40px]">
               Child Mortality
             </TabsTrigger>
-            <TabsTrigger value="health-trends" className="text-xs sm:text-sm">
+            <TabsTrigger value="health-trends" className="text-xs sm:text-sm p-2 min-h-[40px]">
               Health Trends
             </TabsTrigger>
-            <TabsTrigger value="healthcare-access" className="text-xs sm:text-sm">
+            <TabsTrigger value="healthcare-access" className="text-xs sm:text-sm p-2 min-h-[40px]">
               Healthcare Access
             </TabsTrigger>
-            <TabsTrigger value="state-comparison" className="text-xs sm:text-sm">
+            <TabsTrigger value="state-comparison" className="text-xs sm:text-sm p-2 min-h-[40px]">
               State Analysis
             </TabsTrigger>
           </TabsList>
-          <TabsContent value="disparity">
-            <Card>
-              <CardHeader className="p-3 sm:p-6">
-                <CardTitle className="text-base sm:text-xl md:text-2xl">
+          <TabsContent value="disparity" className="mt-4 sm:mt-6">
+            <Card className="overflow-hidden bg-slate-800/50 border-slate-700">
+              <CardHeader className="p-3 sm:p-4 lg:p-6">
+                <CardTitle className="text-lg sm:text-xl md:text-2xl text-white">
                   Urban-Rural Health Disparity in India (2005-2025)
                 </CardTitle>
-                <CardDescription className="text-xs sm:text-sm">
+                <CardDescription className="text-xs sm:text-sm text-gray-300">
                   Time series analysis of health indicators showing the evolution of urban-rural gaps with interactive year selection and trend visualization
                 </CardDescription>
               </CardHeader>
-              <CardContent className="pt-2 sm:pt-4 md:pt-6 px-2 sm:px-6 pb-4 sm:pb-6">
-                <div className="h-[500px] sm:h-[550px] md:h-[600px]">
+              <CardContent className="pt-2 sm:pt-4 md:pt-6 px-2 sm:px-4 lg:px-6 pb-4 sm:pb-6">
+                <div className="h-[400px] sm:h-[500px] md:h-[600px] w-full overflow-x-auto">
                   <ClientOnly>
                     <UrbanRuralDisparity />
                   </ClientOnly>

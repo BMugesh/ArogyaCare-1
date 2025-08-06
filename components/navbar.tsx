@@ -146,25 +146,33 @@ export default function Navbar() {
         </nav>
 
         {/* Mobile Navigation */}
-        <div className="relative lg:hidden flex flex-1 justify-center">
+        <div className="relative lg:hidden">
           <button
             type="button"
             onClick={() => setDropdownOpen(!dropdownOpen)}
-            className="flex items-center space-x-2 px-4 py-2 rounded-lg bg-gradient-to-r from-blue-500 to-green-500 text-white font-medium transition-all duration-300 hover:shadow-lg"
+            className="flex items-center space-x-2 px-3 py-2 rounded-lg bg-gradient-to-r from-blue-500 to-green-500 text-white font-medium transition-all duration-300 hover:shadow-lg"
             aria-expanded={dropdownOpen}
             aria-controls="mobile-menu"
             aria-label="Toggle navigation menu"
           >
             {dropdownOpen ? <X size={18} /> : <Menu size={18} />}
-            <span className="hidden sm:inline">Menu</span>
+            <span className="hidden sm:inline text-sm">Menu</span>
           </button>
 
           {dropdownOpen && (
-            <div
-              id="mobile-menu"
-              className="absolute top-14 left-1/2 transform -translate-x-1/2 w-[95%] max-w-sm bg-white dark:bg-gray-800 shadow-2xl rounded-xl border border-gray-200 dark:border-gray-700 z-50 overflow-hidden"
-            >
-              <div className="py-2">
+            <>
+              {/* Backdrop */}
+              <div 
+                className="fixed inset-0 bg-black bg-opacity-25 z-40" 
+                onClick={() => setDropdownOpen(false)}
+              ></div>
+              
+              {/* Menu */}
+              <div
+                id="mobile-menu"
+                className="absolute top-12 right-0 w-72 sm:w-80 bg-white dark:bg-gray-800 shadow-2xl rounded-xl border border-gray-200 dark:border-gray-700 z-50 overflow-hidden"
+              >
+                <div className="py-2">
                 <Link
                   href="/health-check"
                   className="flex items-center space-x-3 px-4 py-3 text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:text-blue-600 transition-all duration-200"
@@ -221,8 +229,9 @@ export default function Navbar() {
                   <Pill className="h-5 w-5" />
                   <span className="font-medium">ArogyaScript</span>
                 </Link>
+                </div>
               </div>
-            </div>
+            </>
           )}
         </div>
 
