@@ -131,7 +131,7 @@ export default function FindDoctor() {
       <Navbar />
 
       {/* Enhanced Search Section */}
-      <div className="bg-black text-white py-6 sm:py-8 px-3 sm:px-4 shadow-md">
+      <div className="bg-slate-800/50 text-white py-6 sm:py-8 px-3 sm:px-4 shadow-md">
         <div className="max-w-6xl mx-auto">
           <h1 className="text-2xl sm:text-3xl font-bold text-white mb-4 sm:mb-6 text-center">
             🏥 Find Hospitals Near You
@@ -227,7 +227,7 @@ export default function FindDoctor() {
 
       {/* Map Section */}
       {showMap && (
-        <div className="bg-black text-white px-4 py-6">
+        <div className="bg-slate-800/30 text-white px-4 py-6">
           <div className="max-w-6xl mx-auto">
             <h2 className="text-2xl font-semibold mb-4 text-white pb-2 border-b border-gray-700">
               Nearby Healthcare Locations
@@ -253,7 +253,7 @@ export default function FindDoctor() {
       )}
 
       {/* Results Section - Expanded Area Below */}
-      <div className="flex-grow bg-black text-white px-4 py-8">
+      <div className="flex-grow bg-slate-800/20 text-white px-4 py-8">
         <div className="max-w-6xl mx-auto space-y-8">
           
           {/* Hospital Results */}
@@ -397,7 +397,7 @@ export default function FindDoctor() {
       </div>
 
       {/* Back to Home Button */}
-      <div className="bg-black text-white pb-8 px-4">
+      <div className="bg-slate-800/20 text-white pb-8 px-4">
         <div className="max-w-6xl mx-auto">
           <Button
             variant="outline"

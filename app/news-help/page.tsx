@@ -390,14 +390,14 @@ const testAPIConnection = async () => {
       <Navbar />
       
       {/* Search Section - Fixed at Top */}
-      <div className="bg-black dark:bg-black text-white py-8 px-4 shadow-md">
+      <div className="bg-slate-800/50 text-white py-8 px-4 shadow-md">
         <div className="max-w-6xl mx-auto">
           <h1 className="text-3xl font-bold text-white mb-6 text-center">{getTranslation("heading")}</h1>
           
           <div className="flex flex-col lg:flex-row gap-4 items-stretch">
             <div className="flex-1">
               <select
-                className="w-full px-4 py-3 rounded-lg bg-black dark:bg-black text-white placeholder-gray-400 border border-gray-700"
+                className="w-full px-4 py-3 rounded-lg bg-slate-900/50 text-white placeholder-gray-400 border border-gray-700"
                 value={language}
                 onChange={(e) => setLanguage(e.target.value)}
                 title="Select language for news"
@@ -425,7 +425,7 @@ const testAPIConnection = async () => {
       </div>
       
       {/* Results Section - Expanded Area Below */}
-      <div className="flex-grow dark:bg-black text-white px-4 py-8">
+      <div className="flex-grow bg-slate-800/20 text-white px-4 py-8">
         <div className="max-w-6xl mx-auto">
           {loading ? (
             <div className="flex flex-col items-center justify-center py-12">
@@ -530,7 +530,7 @@ const testAPIConnection = async () => {
               </div>
             </div>
           ) : (
-            <div className="dark:bg-black text-white shadow-md p-8 text-center border border-gray-700 rounded-lg">
+            <div className="bg-slate-800/30 text-white shadow-md p-8 text-center border border-gray-700 rounded-lg">
               <div className="flex flex-col items-center justify-center py-12">
                 <Newspaper size={48} className="text-gray-500 mb-4" />
                 <p className="text-gray-400 text-lg">
@@ -543,7 +543,7 @@ const testAPIConnection = async () => {
       </div>
       
       {/* Back to Home Button */}
-      <div className="dark:bg-black text-white pb-8 px-4">
+      <div className="bg-slate-800/20 text-white pb-8 px-4">
         <div className="max-w-6xl mx-auto">
           <Button
             variant="outline"
