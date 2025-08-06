@@ -6,12 +6,13 @@ import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import { useRouter } from "next/navigation"
-import { Search, MapPin, Building2, Users, Star, Phone, Clock, Filter, Hospital } from "lucide-react"
+import { Search, MapPin, Building2, Users, Star, Phone, Clock, Filter, Hospital, Calendar } from "lucide-react"
 import Navbar from "@/components/navbar"
 import Footer from "@/components/footer"
 import Link from "next/link"
 import dynamic from "next/dynamic"
 import { API_ENDPOINTS } from "@/lib/config"
+import HospitalBookingModal from "@/components/HospitalBookingModal"
 
 // Dynamically import map component to avoid SSR issues
 const HealthCentersMap = dynamic(() => import("@/app/components/HealthCentersMap"), {
@@ -27,6 +28,9 @@ export default function FindDoctor() {
   const [showMap, setShowMap] = useState(false)
   const [nearbyHealthCenters, setNearbyHealthCenters] = useState([])
   const [selectedSpecialty, setSelectedSpecialty] = useState("")
+  const [selectedHospital, setSelectedHospital] = useState(null)
+  const [showBookingModal, setShowBookingModal] = useState(false)
+  const [bookings, setBookings] = useState([])
   const router = useRouter()
 
   // Medical specialties for better hospital matching
@@ -109,6 +113,17 @@ export default function FindDoctor() {
       setHospitalResults({ error: "Failed to fetch hospitals. Please try again." })
     }
     setLoading(false)
+  }
+
+  const handleBookAppointment = (hospital) => {
+    setSelectedHospital(hospital)
+    setShowBookingModal(true)
+  }
+
+  const handleBookingConfirmed = (bookingData) => {
+    setBookings(prev => [...prev, bookingData])
+    // You could also show a success toast here
+    console.log("Booking confirmed:", bookingData)
   }
 
   return (
@@ -312,6 +327,25 @@ export default function FindDoctor() {
                             ))}
                           </div>
                         </div>
+                        <Separator className="bg-gray-600" />
+                        <div className="flex gap-2 mt-3">
+                          <Button
+                            size="sm"
+                            className="flex-1 bg-blue-600 hover:bg-blue-700 text-white"
+                            onClick={() => handleBookAppointment(hospital)}
+                          >
+                            <Calendar className="h-4 w-4 mr-2" />
+                            Book Appointment
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="border-gray-600 text-gray-300 hover:bg-gray-700"
+                            onClick={() => window.open(`tel:${hospital.phone}`, '_self')}
+                          >
+                            <Phone className="h-4 w-4" />
+                          </Button>
+                        </div>
                       </CardContent>
                     </Card>
                   ))}
@@ -376,6 +410,19 @@ export default function FindDoctor() {
       </div>
 
       <Footer />
+
+      {/* Booking Modal */}
+      {selectedHospital && (
+        <HospitalBookingModal
+          isOpen={showBookingModal}
+          onClose={() => {
+            setShowBookingModal(false)
+            setSelectedHospital(null)
+          }}
+          hospital={selectedHospital}
+          onBookingConfirmed={handleBookingConfirmed}
+        />
+      )}
     </div>
   )
 }
