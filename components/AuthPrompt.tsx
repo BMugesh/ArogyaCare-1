@@ -43,8 +43,8 @@ export function AuthPrompt({ onClose, showCloseButton = true }: AuthPromptProps)
   }
 
   return (
-    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-3 sm:p-4">
-      <Card className="w-full max-w-2xl mx-auto relative animate-in fade-in-0 zoom-in-95 duration-300 m-4">
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-3">
+      <Card className="w-full max-w-md sm:max-w-lg mx-auto relative animate-in fade-in-0 zoom-in-95 duration-300">
         {showCloseButton && (
           <button
             onClick={handleClose}
@@ -70,21 +70,21 @@ export function AuthPrompt({ onClose, showCloseButton = true }: AuthPromptProps)
 
         <CardContent className="space-y-4 sm:space-y-6 px-4 sm:px-6 pb-6">
           {/* Features Preview */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="text-center p-6 bg-blue-50 rounded-lg">
-              <Bot className="h-8 w-8 text-blue-600 mx-auto mb-2" />
-              <h3 className="font-medium text-blue-900">AI Health Assistant</h3>
-              <p className="text-sm text-blue-600">Get instant health advice</p>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div className="text-center p-4 bg-blue-50 rounded-lg">
+              <Bot className="h-6 w-6 text-blue-600 mx-auto mb-2" />
+              <h3 className="font-medium text-blue-900 text-sm">AI Health Assistant</h3>
+              <p className="text-xs text-blue-600">Get instant health advice</p>
             </div>
-            <div className="text-center p-6 bg-green-50 rounded-lg">
-              <Stethoscope className="h-8 w-8 text-green-600 mx-auto mb-2" />
-              <h3 className="font-medium text-green-900">Find Doctors</h3>
-              <p className="text-sm text-green-600">Locate nearby healthcare</p>
+            <div className="text-center p-4 bg-green-50 rounded-lg">
+              <Stethoscope className="h-6 w-6 text-green-600 mx-auto mb-2" />
+              <h3 className="font-medium text-green-900 text-sm">Find Doctors</h3>
+              <p className="text-xs text-green-600">Locate nearby healthcare</p>
             </div>
-            <div className="text-center p-6 bg-purple-50 rounded-lg">
-              <Shield className="h-8 w-8 text-purple-600 mx-auto mb-2" />
-              <h3 className="font-medium text-purple-900">Prescription Analysis</h3>
-              <p className="text-sm text-purple-600">AI-powered medication help</p>
+            <div className="text-center p-4 bg-purple-50 rounded-lg">
+              <Shield className="h-6 w-6 text-purple-600 mx-auto mb-2" />
+              <h3 className="font-medium text-purple-900 text-sm">Prescription Analysis</h3>
+              <p className="text-xs text-purple-600">AI-powered medication help</p>
             </div>
           </div>
 
