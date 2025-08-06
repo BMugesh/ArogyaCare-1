@@ -386,7 +386,7 @@ const testAPIConnection = async () => {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-black dark:bg-black text-white">
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white">
       <Navbar />
       
       {/* Search Section - Fixed at Top */}

@@ -21,7 +21,7 @@ export default function HealthInsights() {
   const [activeTab, setActiveTab] = useState("disparity")
 
   return (
-    <div className="min-h-screen bg-black dark:bg-black text-white" suppressHydrationWarning>
+    <div className="relative z-10 min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900" suppressHydrationWarning>
       <Navbar />
       <main className="container mx-auto px-4 py-12">
         <motion.div

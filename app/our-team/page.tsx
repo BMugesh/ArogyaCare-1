@@ -99,7 +99,7 @@ export default function OurTeam() {
   }, [])
 
   return (
-    <div className="min-h-screen bg-black dark:bg-black text-white">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white">
       <Navbar />
       <main className="container mx-auto px-4 py-12">
         <motion.h1
@@ -110,7 +110,7 @@ export default function OurTeam() {
         >
           Our Team
         </motion.h1>
-        <section className="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8 bg-black">
+        <section className="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
           {isLoaded &&
             teamMembers.map((member, index) => <TeamMember key={member.name} member={member} index={index} />)}
         </section>

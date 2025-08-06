@@ -175,7 +175,7 @@ export default function GMap() {
   }, [places, selectedFacility, distanceFilter, searchTerm, sortBy])
 
   return (
-    <div className="relative z-10 flex flex-col items-center justify-center p-6 bg-gray-1000 text-white min-h-screen">
+    <div className="relative z-10 flex flex-col items-center justify-center p-6 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white min-h-screen">
       <Navbar className="fixed top-0 left-0 w-full bg-black shadow-md z-50" />
 
       <h1 className="text-3xl font-bold mb-6 pt-20 text-white text-center">Accessible Healthcare Locations</h1>
