@@ -43,45 +43,45 @@ export function AuthPrompt({ onClose, showCloseButton = true }: AuthPromptProps)
   }
 
   return (
-    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <Card className="w-full max-w-2xl mx-auto relative animate-in fade-in-0 zoom-in-95 duration-300">
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-3 sm:p-4">
+      <Card className="w-full max-w-2xl mx-auto relative animate-in fade-in-0 zoom-in-95 duration-300 m-4">
         {showCloseButton && (
           <button
             onClick={handleClose}
-            className="absolute top-4 right-4 p-2 hover:bg-gray-100 rounded-full transition-colors"
+            className="absolute top-3 right-3 p-2 hover:bg-gray-100 rounded-full transition-colors z-10"
           >
             <X className="h-4 w-4" />
           </button>
         )}
         
-        <CardHeader className="text-center pb-4">
+        <CardHeader className="text-center pb-4 px-4 sm:px-6 pt-6">
           <div className="flex items-center justify-center mb-4">
             <div className="p-3 bg-gradient-to-r from-blue-500 to-green-500 rounded-full">
               <Heart className="h-8 w-8 text-white" />
             </div>
           </div>
-          <CardTitle className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
+          <CardTitle className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
             Welcome to ArogyaCare
           </CardTitle>
-          <CardDescription className="text-base mt-2">
+          <CardDescription className="text-sm sm:text-base mt-2 px-2">
             Your AI-powered healthcare companion for better health management
           </CardDescription>
         </CardHeader>
 
-        <CardContent className="space-y-6">
+        <CardContent className="space-y-4 sm:space-y-6 px-4 sm:px-6 pb-6">
           {/* Features Preview */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="text-center p-4 bg-blue-50 rounded-lg">
+            <div className="text-center p-6 bg-blue-50 rounded-lg">
               <Bot className="h-8 w-8 text-blue-600 mx-auto mb-2" />
               <h3 className="font-medium text-blue-900">AI Health Assistant</h3>
               <p className="text-sm text-blue-600">Get instant health advice</p>
             </div>
-            <div className="text-center p-4 bg-green-50 rounded-lg">
+            <div className="text-center p-6 bg-green-50 rounded-lg">
               <Stethoscope className="h-8 w-8 text-green-600 mx-auto mb-2" />
               <h3 className="font-medium text-green-900">Find Doctors</h3>
               <p className="text-sm text-green-600">Locate nearby healthcare</p>
             </div>
-            <div className="text-center p-4 bg-purple-50 rounded-lg">
+            <div className="text-center p-6 bg-purple-50 rounded-lg">
               <Shield className="h-8 w-8 text-purple-600 mx-auto mb-2" />
               <h3 className="font-medium text-purple-900">Prescription Analysis</h3>
               <p className="text-sm text-purple-600">AI-powered medication help</p>
