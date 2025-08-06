@@ -35,6 +35,7 @@ export default function LoginPage() {
     if (error) {
       setError(error);
     } else {
+      // Check if user needs language setup
       router.push('/');
     }
     
@@ -63,7 +64,8 @@ export default function LoginPage() {
     if (error) {
       setError(error);
     } else {
-      router.push('/');
+      // New users need language setup
+      router.push('/setup-languages');
     }
     
     setIsLoading(false);

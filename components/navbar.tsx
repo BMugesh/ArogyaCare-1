@@ -16,49 +16,66 @@ import {
   X,
   LogIn,
   LogOut,
-  User
+  User,
+  Pill
 } from "lucide-react"
 import { useAuth } from "@/hooks/useAuth"
+import { useLanguagePreferences } from "@/hooks/useLanguagePreferences"
 import { Button } from "@/components/ui/button"
+import { LanguageSwitcher } from "@/components/LanguageSwitcher"
 
-const translations = [
-  { lang: "English", text: "ArogyaCare" },
-  { lang: "हिन्दी", text: "आरोग्यकेयर" },
-  { lang: "ગુજરાતી", text: "આરોગ્યકેર" },
-  { lang: "বাংলা", text: "আরোগ্যকেয়ার" },
-  { lang: "मराठी", text: "आरोग्यकेअर" },
-  { lang: "தமிழ்", text: "ஆரோக்கியகேர்" },
-]
-
-const greetings = [
-  { lang: "English", text: "Hello" },
-  { lang: "हिन्दी", text: "नमस्ते" },
-  { lang: "ગુજરાતી", text: "નમસ્તે" },
-  { lang: "বাংলা", text: "নমস্কার" },
-  { lang: "मराठी", text: "नमस्कार" },
-  { lang: "தமிழ்", text: "வணக்கம்" },
-]
+// Static translations mapping
+const allTranslations = {
+  'en': { lang: "English", text: "ArogyaCare", greeting: "Hello" },
+  'hi': { lang: "हिन्दी", text: "आरोग्यकेयर", greeting: "नमस्ते" },
+  'gu': { lang: "ગુજરાતી", text: "આરોગ્યકેર", greeting: "નમસ્તે" },
+  'bn': { lang: "বাংলা", text: "আরোগ্যকেয়ার", greeting: "নমস্কার" },
+  'mr': { lang: "मराठी", text: "आरोग्यकेअर", greeting: "नमस्कार" },
+  'ta': { lang: "தமிழ்", text: "ஆரோக்கியகேர்", greeting: "வணக்கம்" },
+  'te': { lang: "తెలుగు", text: "ఆరోగ్యకేర్", greeting: "నమస్కారం" },
+  'kn': { lang: "ಕನ್ನಡ", text: "ಆರೋಗ್ಯಕೇರ್", greeting: "ನಮಸ್ಕಾರ" },
+  'ml': { lang: "മലയാളം", text: "ആരോഗ്യകേർ", greeting: "നമസ്കാരം" },
+  'pa': { lang: "ਪੰਜਾਬੀ", text: "ਆਰੋਗਿਆਕੇਅਰ", greeting: "ਸਤ ਸ੍ਰੀ ਅਕਾਲ" },
+  'or': { lang: "ଓଡ଼ିଆ", text: "ଆରୋଗ୍ୟକେୟାର", greeting: "ନମସ୍କାର" },
+  'as': { lang: "অসমীয়া", text: "আৰোগ্যকেয়াৰ", greeting: "নমস্কাৰ" }
+}
 
 export default function Navbar() {
   const [indexLeft, setIndexLeft] = useState(0)
   const [indexRight, setIndexRight] = useState(0)
   const [dropdownOpen, setDropdownOpen] = useState(false) // Controls dropdown expansion
   const { user, logout } = useAuth()
+  const { preferences, loading } = useLanguagePreferences()
+
+  // Get user's languages for cycling
+  const getUserLanguages = () => {
+    if (!preferences || loading) {
+      return [allTranslations['en']]; // Default to English
+    }
+    
+    const userLangs = [allTranslations[preferences.primaryLanguage.code]];
+    if (preferences.secondaryLanguage) {
+      userLangs.push(allTranslations[preferences.secondaryLanguage.code]);
+    }
+    return userLangs.filter(Boolean); // Remove any undefined
+  }
+
+  const userTranslations = getUserLanguages()
 
   useEffect(() => {
     const intervalLeft = setInterval(() => {
-      setIndexLeft((prevIndex) => (prevIndex + 1) % translations.length)
+      setIndexLeft((prevIndex) => (prevIndex + 1) % userTranslations.length)
     }, 3000)
 
     const intervalRight = setInterval(() => {
-      setIndexRight((prevIndex) => (prevIndex + 1) % greetings.length)
+      setIndexRight((prevIndex) => (prevIndex + 1) % userTranslations.length)
     }, 3000)
 
     return () => {
       clearInterval(intervalLeft)
       clearInterval(intervalRight)
     }
-  }, [])
+  }, [userTranslations.length])
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur-lg shadow-lg">
@@ -70,7 +87,7 @@ export default function Navbar() {
               <Heart className="h-6 w-6 text-white" />
             </div>
             <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent transition-all duration-1000 sm:text-2xl lg:text-3xl">
-              {translations[indexLeft].text}
+              {userTranslations[indexLeft]?.text || "ArogyaCare"}
             </span>
           </Link>
         </div>
@@ -118,6 +135,13 @@ export default function Navbar() {
           >
             <Users className="h-4 w-4 group-hover:scale-110 transition-transform" />
             <span>AarogyaParivar</span>
+          </Link>
+          <Link
+            href="/prescriptions"
+            className="flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-300 hover:bg-purple-50 hover:text-purple-600 group"
+          >
+            <Pill className="h-4 w-4 group-hover:scale-110 transition-transform" />
+            <span>ArogyaScript</span>
           </Link>
         </nav>
 
@@ -189,6 +213,14 @@ export default function Navbar() {
                   <Users className="h-5 w-5" />
                   <span className="font-medium">AarogyaParivar</span>
                 </Link>
+                <Link
+                  href="/prescriptions"
+                  className="flex items-center space-x-3 px-4 py-3 text-gray-700 dark:text-gray-200 hover:bg-purple-50 dark:hover:bg-purple-900/20 hover:text-purple-600 transition-all duration-200"
+                  onClick={() => setDropdownOpen(false)}
+                >
+                  <Pill className="h-5 w-5" />
+                  <span className="font-medium">ArogyaScript</span>
+                </Link>
               </div>
             </div>
           )}
@@ -200,14 +232,17 @@ export default function Navbar() {
           <div className="hidden sm:flex items-center space-x-2 px-3 py-2 bg-gradient-to-r from-green-500 to-blue-500 rounded-lg">
             <Heart className="h-4 w-4 text-white animate-pulse" />
             <span className="text-sm font-medium text-white transition-all duration-1000">
-              {greetings[indexRight].text}
+              {userTranslations[indexRight]?.greeting || "Hello"}
             </span>
           </div>
           <div className="sm:hidden">
             <span className="text-lg font-bold bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent transition-all duration-1000">
-              {greetings[indexRight].text}
+              {userTranslations[indexRight]?.greeting || "Hello"}
             </span>
           </div>
+          
+          {/* Language Switcher */}
+          <LanguageSwitcher />
           
           {/* Auth Buttons */}
           {user ? (
