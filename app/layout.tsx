@@ -7,6 +7,7 @@ import ErrorBoundary from "@/components/error-boundary"
 import { AuthProvider, SafeContextProvider } from "@/components/providers"
 import { LanguageProvider } from "@/hooks/useLanguagePreferences"
 import { LanguageSetupRedirect } from "@/components/LanguageSetupRedirect"
+import { FirebaseDebug } from "@/components/FirebaseDebug"
 import "leaflet/dist/leaflet.css"
 
 const inter = Inter({ subsets: ["latin"] })
@@ -32,6 +33,7 @@ export default function RootLayout({
                 <LanguageSetupRedirect>
                   <MouseMoveEffect />
                   {children}
+                  <FirebaseDebug />
                 </LanguageSetupRedirect>
               </LanguageProvider>
             </AuthProvider>
