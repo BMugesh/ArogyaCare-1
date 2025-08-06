@@ -201,62 +201,158 @@ export default function NewsHelp() {
     }
   }
 
-  const handleGetNews = async (isAutoRefresh = false) => {
-    if (!isAutoRefresh) {
-      setLoading(true)
-      setError(null)
-      setArticles([]) // Clear previous articles only for manual refresh
-    }
-
-    const startTime = Date.now()
-
-    try {
-      // Add timeout for better user experience
-      const controller = new AbortController()
-      const timeoutId = setTimeout(() => controller.abort(), 20000) // 20 second timeout
-
-      // Fetch news from the API
-      const res = await fetch(API_ENDPOINTS.NEWS, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ language }),
-        signal: controller.signal
-      })
-
-      clearTimeout(timeoutId)
-
-      if (!res.ok) {
-        throw new Error(`HTTP error! status: ${res.status}`)
-      }
-
-      const data = await res.json()
-      setApiResponse(data)
-
-      if (data.news) {
-        parseNewsResponse(data.news)
-        const responseTime = Date.now() - startTime
-        console.log(`News fetched in ${responseTime}ms`)
-        setLastRefresh(new Date())
-        setRefreshCountdown(10) // Reset countdown
-      } else {
-        throw new Error("No news data received")
-      }
-    } catch (error) {
-      console.error("Error fetching news:", error)
-      let errorMessage = "समाचार प्राप्त करने में त्रुटि हुई। कृपया पुनः प्रयास करें।"
-
-      if (error.name === 'AbortError') {
-        errorMessage = "समाचार लोड करने में अधिक समय लग रहा है। कृपया पुनः प्रयास करें।"
-      }
-
-      setError(errorMessage)
-    } finally {
-      if (!isAutoRefresh) {
-        setLoading(false)
-      }
-    }
+  // Enhanced real-time news fetching function
+const handleGetNews = async (isAutoRefresh = false) => {
+  if (!isAutoRefresh) {
+    setLoading(true)
+    setError(null)
+    setArticles([]) // Clear previous articles only for manual refresh
   }
 
+  const startTime = Date.now()
+
+  try {
+    // Add timeout for better user experience
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), 20000) // 20 second timeout
+
+    console.log('Fetching real-time news with language:', language) // Debug log
+    console.log('API Endpoint:', API_ENDPOINTS.NEWS_REALTIME) // Debug log
+
+    // Fetch real-time news from the new API endpoint
+    const res = await fetch(API_ENDPOINTS.NEWS_REALTIME, {
+      method: "POST",
+      headers: { 
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+      },
+      body: JSON.stringify({ language }),
+      signal: controller.signal
+    })
+
+    clearTimeout(timeoutId)
+
+    // Enhanced error handling with more specific messages
+    if (!res.ok) {
+      let errorMessage = `HTTP error! status: ${res.status}`
+      
+      // Try to get error details from response
+      try {
+        const errorData = await res.json()
+        console.error('API Error Response:', errorData)
+        errorMessage = errorData.message || errorData.error || errorMessage
+      } catch (e) {
+        // If we can't parse the error response, try to get text
+        try {
+          const errorText = await res.text()
+          console.error('API Error Text:', errorText)
+          errorMessage = errorText || errorMessage
+        } catch (e) {
+          console.error('Could not parse error response')
+        }
+      }
+
+      // Provide user-friendly error messages based on status codes
+      switch (res.status) {
+        case 400:
+          errorMessage = "Invalid request. Please check your language selection."
+          break
+        case 401:
+          errorMessage = "Authentication failed. Please check your API credentials."
+          break
+        case 403:
+          errorMessage = "Access forbidden. You may not have permission to access this resource."
+          break
+        case 404:
+          errorMessage = "News service not found. Please check the API endpoint."
+          break
+        case 429:
+          errorMessage = "Too many requests. Please wait a moment before trying again."
+          break
+        case 500:
+          errorMessage = "Server error. The news service is currently experiencing issues."
+          break
+        case 502:
+          errorMessage = "Bad gateway. The news service is temporarily unavailable."
+          break
+        case 503:
+          errorMessage = "Service unavailable. Please try again later."
+          break
+        default:
+          errorMessage = `Network error (${res.status}). Please try again.`
+      }
+
+      throw new Error(errorMessage)
+    }
+
+    const data = await res.json()
+    console.log('API Response:', data) // Debug log
+    setApiResponse(data)
+
+    if (data.news) {
+      parseNewsResponse(data.news)
+      const responseTime = Date.now() - startTime
+      console.log(`News fetched in ${responseTime}ms`)
+      setLastRefresh(new Date())
+      setRefreshCountdown(10) // Reset countdown
+    } else {
+      throw new Error("No news data received from the API")
+    }
+  } catch (error) {
+    console.error("Error fetching news:", error)
+    
+    let errorMessage = "Failed to fetch news. Please try again."
+
+    if (error instanceof Error) {
+      if (error.name === 'AbortError') {
+        errorMessage = "Request timed out. The news service is taking too long to respond."
+      } else if (error.message) {
+        errorMessage = error.message
+      }
+    }
+
+    // Set language-specific error messages
+    const errorTranslations: Record<string, string> = {
+      "English": errorMessage,
+      "Hindi": "समाचार प्राप्त करने में त्रुटि हुई। कृपया पुनः प्रयास करें।",
+      "Tamil": "செய்திகளைப் பெறுவதில் பிழை. தயவுசெய்து மீண்டும் முயற்சிக்கவும்।",
+      "Gujarati": "સમાચાર મેળવવામાં ભૂલ. કૃપા કરીને ફરી પ્રયાસ કરો.",
+      "Bengali": "সংবাদ পেতে ত্রুটি। অনুগ্রহ করে আবার চেষ্টা করুন।",
+      "Marathi": "बातम्या प्राप्त करण्यात त्रुटी. कृपया पुन्हा प्रयत्न करा।"
+    }
+
+    setError(errorTranslations[language] || errorMessage)
+  } finally {
+    if (!isAutoRefresh) {
+      setLoading(false)
+    }
+  }
+}
+
+// Additional debugging helper function
+const testAPIConnection = async () => {
+  try {
+    console.log('Testing API connection...')
+    console.log('API_ENDPOINTS.NEWS:', API_ENDPOINTS.NEWS)
+    
+    const response = await fetch(API_ENDPOINTS.NEWS, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ language: 'English' })
+    })
+    
+    console.log('Response status:', response.status)
+    console.log('Response headers:', [...response.headers.entries()])
+    
+    const responseText = await response.text()
+    console.log('Response body:', responseText)
+    
+  } catch (error) {
+    console.error('API connection test failed:', error)
+  }
+}
   const handleManualRefresh = () => {
     handleGetNews(false)
   }
@@ -380,7 +476,7 @@ export default function NewsHelp() {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
                 {articles.map((article, idx) => {
                   // Determine article category based on content
-                  const getCategory = (title, content) => {
+                  const getCategory = (title: string, content: string) => {
                     const text = (title + " " + content).toLowerCase()
                     if (text.includes('vaccine') || text.includes('immunization')) return { name: 'Vaccination', color: 'bg-blue-600' }
                     if (text.includes('covid') || text.includes('coronavirus')) return { name: 'COVID-19', color: 'bg-red-600' }
@@ -463,4 +559,3 @@ export default function NewsHelp() {
     </div>
   )
 }
-
