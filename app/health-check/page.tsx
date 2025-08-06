@@ -114,13 +114,14 @@ export default function HealthCheck() {
 
   useEffect(() => {
     if (loading) {
-      const message = loadingMessages[loadingMessageIndex]
+      const messageObj = loadingMessages[loadingMessageIndex]
+      const messageText = messageObj.text // Extract the text property
       const timeout = setTimeout(() => {
         setCurrentMessage(() => {
-          if (currentIndex < message.length) {
-            return message.substring(0, currentIndex + 1)
+          if (currentIndex < messageText.length) {
+            return messageText.substring(0, currentIndex + 1)
           } else {
-            return message
+            return messageText
           }
         })
         setCurrentIndex((prevIndex) => prevIndex + 1)
@@ -554,4 +555,3 @@ export default function HealthCheck() {
     </>
   )
 }
-
