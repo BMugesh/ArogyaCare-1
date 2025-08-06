@@ -3,6 +3,7 @@ import { Inter } from "next/font/google"
 import type React from "react"
 import type { Metadata } from "next"
 import MouseMoveEffect from "@/components/mouse-move-effect"
+import ErrorBoundary from "@/components/error-boundary"
 import "leaflet/dist/leaflet.css"
 
 const inter = Inter({ subsets: ["latin"] })
@@ -21,8 +22,10 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body className={`${inter.className} bg-background text-foreground antialiased`}>
-        <MouseMoveEffect />
-        {children}
+        <ErrorBoundary>
+          <MouseMoveEffect />
+          {children}
+        </ErrorBoundary>
       </body>
     </html>
   )
