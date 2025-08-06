@@ -4,6 +4,7 @@ import { useState } from "react"
 import { motion } from "framer-motion"
 import Navbar from "@/components/navbar"
 import Footer from "@/components/footer"
+import { GuestAccessBanner } from "@/components/GuestAccessBanner"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { UrbanRuralDisparity } from "@/components/charts/UrbanRuralDisparity"
@@ -24,6 +25,7 @@ export default function HealthInsights() {
     <div className="relative z-10 min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900" suppressHydrationWarning>
       <Navbar />
       <main className="container mx-auto px-3 sm:px-4 lg:px-6 py-6 sm:py-12">
+        <GuestAccessBanner />
         <motion.div
           initial={{ opacity: 0, y: -50 }}
           animate={{ opacity: 1, y: 0 }}

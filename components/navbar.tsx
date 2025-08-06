@@ -23,6 +23,7 @@ import { useAuth } from "@/hooks/useAuth"
 import { useLanguagePreferences } from "@/hooks/useLanguagePreferences"
 import { Button } from "@/components/ui/button"
 import { LanguageSwitcher } from "@/components/LanguageSwitcher"
+import { Badge } from "@/components/ui/badge"
 
 // Static translations mapping
 const allTranslations = {
@@ -124,17 +125,27 @@ export default function Navbar() {
           </Link>
           <Link
             href="/health-insights"
-            className="flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-300 hover:bg-indigo-50 hover:text-indigo-600 group"
+            className="flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-300 hover:bg-indigo-50 hover:text-indigo-600 group relative"
           >
             <BarChart3 className="h-4 w-4 group-hover:scale-110 transition-transform" />
             <span>AarogyaView</span>
+            {!user && (
+              <Badge variant="secondary" className="text-xs bg-green-100 text-green-700 ml-1">
+                FREE
+              </Badge>
+            )}
           </Link>
           <Link
             href="/our-team"
-            className="flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-300 hover:bg-pink-50 hover:text-pink-600 group"
+            className="flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-300 hover:bg-pink-50 hover:text-pink-600 group relative"
           >
             <Users className="h-4 w-4 group-hover:scale-110 transition-transform" />
             <span>AarogyaParivar</span>
+            {!user && (
+              <Badge variant="secondary" className="text-xs bg-green-100 text-green-700 ml-1">
+                FREE
+              </Badge>
+            )}
           </Link>
           <Link
             href="/prescriptions"
@@ -207,19 +218,33 @@ export default function Navbar() {
                 </Link>
                 <Link
                   href="/health-insights"
-                  className="flex items-center space-x-3 px-4 py-3 text-gray-700 dark:text-gray-200 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 hover:text-indigo-600 transition-all duration-200"
+                  className="flex items-center justify-between px-4 py-3 text-gray-700 dark:text-gray-200 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 hover:text-indigo-600 transition-all duration-200"
                   onClick={() => setDropdownOpen(false)}
                 >
-                  <BarChart3 className="h-5 w-5" />
-                  <span className="font-medium">AarogyaView</span>
+                  <div className="flex items-center space-x-3">
+                    <BarChart3 className="h-5 w-5" />
+                    <span className="font-medium">AarogyaView</span>
+                  </div>
+                  {!user && (
+                    <Badge variant="secondary" className="text-xs bg-green-100 text-green-700">
+                      FREE
+                    </Badge>
+                  )}
                 </Link>
                 <Link
                   href="/our-team"
-                  className="flex items-center space-x-3 px-4 py-3 text-gray-700 dark:text-gray-200 hover:bg-pink-50 dark:hover:bg-pink-900/20 hover:text-pink-600 transition-all duration-200"
+                  className="flex items-center justify-between px-4 py-3 text-gray-700 dark:text-gray-200 hover:bg-pink-50 dark:hover:bg-pink-900/20 hover:text-pink-600 transition-all duration-200"
                   onClick={() => setDropdownOpen(false)}
                 >
-                  <Users className="h-5 w-5" />
-                  <span className="font-medium">AarogyaParivar</span>
+                  <div className="flex items-center space-x-3">
+                    <Users className="h-5 w-5" />
+                    <span className="font-medium">AarogyaParivar</span>
+                  </div>
+                  {!user && (
+                    <Badge variant="secondary" className="text-xs bg-green-100 text-green-700">
+                      FREE
+                    </Badge>
+                  )}
                 </Link>
                 <Link
                   href="/prescriptions"

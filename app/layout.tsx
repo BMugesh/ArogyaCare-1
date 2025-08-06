@@ -7,6 +7,7 @@ import ErrorBoundary from "@/components/error-boundary"
 import { AuthProvider, SafeContextProvider } from "@/components/providers"
 import { LanguageProvider } from "@/hooks/useLanguagePreferences"
 import { LanguageSetupRedirect } from "@/components/LanguageSetupRedirect"
+import { RouteGuard } from "@/components/RouteGuard"
 import { FirebaseDebug } from "@/components/FirebaseDebug"
 import "leaflet/dist/leaflet.css"
 
@@ -31,9 +32,11 @@ export default function RootLayout({
             <AuthProvider>
               <LanguageProvider>
                 <LanguageSetupRedirect>
-                  <MouseMoveEffect />
-                  {children}
-                  <FirebaseDebug />
+                  <RouteGuard>
+                    <MouseMoveEffect />
+                    {children}
+                    <FirebaseDebug />
+                  </RouteGuard>
                 </LanguageSetupRedirect>
               </LanguageProvider>
             </AuthProvider>

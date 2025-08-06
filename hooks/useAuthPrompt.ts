@@ -12,18 +12,29 @@ export function useAuthPrompt() {
     // Check if user has previously dismissed the prompt
     const hasSeenPrompt = localStorage.getItem('arogyacare-auth-prompt-seen');
     const hasSignedUp = localStorage.getItem('arogyacare-has-account');
+    const lastVisit = localStorage.getItem('arogyacare-last-visit');
+    const currentTime = Date.now();
     
     // Show prompt if:
     // 1. User is not authenticated
-    // 2. User hasn't seen the prompt before (or it's been more than 7 days)
-    // 3. User hasn't interacted with any features yet
-    if (!user && !hasSeenPrompt && !hasSignedUp) {
-      const timer = setTimeout(() => {
-        setShowPrompt(true);
-      }, 2000); // Show after 2 seconds
+    // 2. User hasn't seen the prompt recently (or it's been more than 24 hours)
+    // 3. User is returning to home page
+    if (!user) {
+      const shouldShowPrompt = !hasSeenPrompt || 
+        (lastVisit && currentTime - parseInt(lastVisit) > 24 * 60 * 60 * 1000) || // 24 hours
+        !hasSignedUp;
 
-      return () => clearTimeout(timer);
+      if (shouldShowPrompt) {
+        const timer = setTimeout(() => {
+          setShowPrompt(true);
+        }, 2000); // Show after 2 seconds
+
+        return () => clearTimeout(timer);
+      }
     }
+
+    // Update last visit time
+    localStorage.setItem('arogyacare-last-visit', currentTime.toString());
   }, [user]);
 
   const dismissPrompt = () => {

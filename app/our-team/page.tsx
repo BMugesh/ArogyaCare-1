@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
 import Navbar from "@/components/navbar"
 import Footer from "@/components/footer"
+import { GuestAccessBanner } from "@/components/GuestAccessBanner"
 import { Github, Linkedin, Mail, User, UserCircle } from "lucide-react"
 
 const teamMembers = [
@@ -102,6 +103,7 @@ export default function OurTeam() {
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white">
       <Navbar />
       <main className="container mx-auto px-4 py-12">
+        <GuestAccessBanner />
         <motion.h1
           initial={{ opacity: 0, y: -50 }}
           animate={{ opacity: 1, y: 0 }}
