@@ -67,54 +67,43 @@ export default function FindDoctor() {
     setHospitalResults(null)
     
     try {
-      // Mock hospital data - in real app, this would be an API call
-      const mockHospitals = [
-        {
-          name: "City General Hospital",
-          address: `123 Main St, ${location}`,
-          specialties: ["Emergency Medicine", "Cardiology", "General Surgery"],
-          rating: 4.5,
-          distance: "0.8 km",
-          phone: "+1-555-0123",
-          type: "General Hospital",
-          availability: "24/7"
-        },
-        {
-          name: "Heart Care Specialty Center",
-          address: `456 Oak Ave, ${location}`,
-          specialties: ["Cardiology", "Cardiac Surgery", "Interventional Cardiology"],
-          rating: 4.8,
-          distance: "1.2 km",
-          phone: "+1-555-0456",
-          type: "Specialty Hospital",
-          availability: "6 AM - 10 PM"
-        },
-        {
-          name: "Children's Medical Center",
-          address: `789 Pine St, ${location}`,
-          specialties: ["Pediatrics", "Pediatric Surgery", "NICU"],
-          rating: 4.7,
-          distance: "2.1 km", 
-          phone: "+1-555-0789",
-          type: "Children's Hospital",
-          availability: "24/7"
-        }
-      ]
+      // Call the real hospital API
+      const res = await fetch(API_ENDPOINTS.HOSPITALS, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ 
+          condition: condition,
+          location: location,
+          specialty: selectedSpecialty 
+        }),
+      })
 
-      // Filter hospitals based on condition and specialty
-      let filteredHospitals = mockHospitals
-      const suggestedSpecialty = getSuggestedSpecialty(condition)
+      const data = await res.json()
       
-      if (selectedSpecialty || suggestedSpecialty) {
-        const targetSpecialty = selectedSpecialty || suggestedSpecialty
-        filteredHospitals = mockHospitals.filter(hospital => 
-          hospital.specialties.some(spec => 
-            spec.toLowerCase().includes(targetSpecialty.toLowerCase())
-          )
-        )
+      if (data.error) {
+        throw new Error(data.error)
       }
 
-      setHospitalResults({ hospitals: filteredHospitals, suggestedSpecialty })
+      // Process the API response
+      const hospitalsWithDistance = data.hospitals.map(hospital => ({
+        name: hospital.name,
+        address: hospital.address,
+        specialties: hospital.specialties,
+        rating: hospital.rating,
+        distance: hospital.distance,
+        phone: hospital.phone,
+        type: hospital.type,
+        availability: hospital.availability,
+        description: hospital.description,
+        beds: hospital.beds,
+        established: hospital.established
+      }))
+
+      setHospitalResults({ 
+        hospitals: hospitalsWithDistance, 
+        suggestedSpecialty: data.suggestedSpecialty,
+        totalFound: data.totalFound
+      })
     } catch (error) {
       console.error("Error fetching hospitals:", error)
       setHospitalResults({ error: "Failed to fetch hospitals. Please try again." })

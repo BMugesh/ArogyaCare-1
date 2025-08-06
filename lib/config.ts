@@ -6,6 +6,7 @@ export const API_BASE_URL = process.env.NODE_ENV === 'production'
 export const API_ENDPOINTS = {
   ASK: `${API_BASE_URL}/ask`,
   DOCTORS: `${API_BASE_URL}/doctors`,
+  HOSPITALS: `${API_BASE_URL}/hospitals`,
   NEWS: `${API_BASE_URL}/news`,
   NEWS_REALTIME: `${API_BASE_URL}/news-realtime`,
   LOCATION: `${API_BASE_URL}/location`,
