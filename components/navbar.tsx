@@ -13,8 +13,13 @@ import {
   Users,
   Stethoscope,
   Menu,
-  X
+  X,
+  LogIn,
+  LogOut,
+  User
 } from "lucide-react"
+import { useAuth } from "@/hooks/useAuth"
+import { Button } from "@/components/ui/button"
 
 const translations = [
   { lang: "English", text: "ArogyaCare" },
@@ -38,6 +43,7 @@ export default function Navbar() {
   const [indexLeft, setIndexLeft] = useState(0)
   const [indexRight, setIndexRight] = useState(0)
   const [dropdownOpen, setDropdownOpen] = useState(false) // Controls dropdown expansion
+  const { user, logout } = useAuth()
 
   useEffect(() => {
     const intervalLeft = setInterval(() => {
@@ -121,7 +127,7 @@ export default function Navbar() {
             type="button"
             onClick={() => setDropdownOpen(!dropdownOpen)}
             className="flex items-center space-x-2 px-4 py-2 rounded-lg bg-gradient-to-r from-blue-500 to-green-500 text-white font-medium transition-all duration-300 hover:shadow-lg"
-            aria-expanded={dropdownOpen ? "true" : "false"}
+            aria-expanded={dropdownOpen}
             aria-controls="mobile-menu"
             aria-label="Toggle navigation menu"
           >
@@ -188,8 +194,9 @@ export default function Navbar() {
           )}
         </div>
 
-        {/* Right Side: Animated Greeting */}
+        {/* Right Side: Auth Section */}
         <div className="flex items-center space-x-2">
+          {/* Animated Greeting */}
           <div className="hidden sm:flex items-center space-x-2 px-3 py-2 bg-gradient-to-r from-green-500 to-blue-500 rounded-lg">
             <Heart className="h-4 w-4 text-white animate-pulse" />
             <span className="text-sm font-medium text-white transition-all duration-1000">
@@ -201,6 +208,34 @@ export default function Navbar() {
               {greetings[indexRight].text}
             </span>
           </div>
+          
+          {/* Auth Buttons */}
+          {user ? (
+            <div className="flex items-center space-x-2">
+              <div className="hidden sm:flex items-center space-x-2 px-2 py-1 bg-blue-50 rounded-lg">
+                <User className="h-4 w-4 text-blue-600" />
+                <span className="text-sm text-blue-600 max-w-24 truncate">
+                  {user.email}
+                </span>
+              </div>
+              <Button
+                onClick={() => logout()}
+                size="sm"
+                variant="outline"
+                className="flex items-center space-x-1"
+              >
+                <LogOut className="h-4 w-4" />
+                <span className="hidden sm:inline">Sign Out</span>
+              </Button>
+            </div>
+          ) : (
+            <Link href="/login">
+              <Button size="sm" className="flex items-center space-x-1">
+                <LogIn className="h-4 w-4" />
+                <span className="hidden sm:inline">Sign In</span>
+              </Button>
+            </Link>
+          )}
         </div>
       </div>
     </header>
