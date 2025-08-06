@@ -4,6 +4,8 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { useAuthPrompt } from "@/hooks/useAuthPrompt";
+import { AuthPrompt } from "@/components/AuthPrompt";
 
 const translations = [
   { lang: "English", text: "Your Health, Our Priority" },
@@ -53,6 +55,7 @@ function FloatingPaths({ position }: { position: number }) {
 
 export default function BackgroundPaths() {
   const [index, setIndex] = useState(0);
+  const { showPrompt, dismissPrompt } = useAuthPrompt();
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -107,6 +110,11 @@ export default function BackgroundPaths() {
           </div>
         </motion.div>
       </div>
+      
+      {/* Auth Prompt Modal */}
+      {showPrompt && (
+        <AuthPrompt onClose={dismissPrompt} />
+      )}
     </div>
   );
 }

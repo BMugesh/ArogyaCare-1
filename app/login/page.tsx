@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -21,9 +21,19 @@ export default function LoginPage() {
   const [error, setError] = useState('');
   const [resetEmail, setResetEmail] = useState('');
   const [resetMessage, setResetMessage] = useState('');
+  const [activeTab, setActiveTab] = useState('signin');
   
   const { signIn, signUp, resetPassword } = useAuth();
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  // Set initial tab based on URL parameter
+  useEffect(() => {
+    const tab = searchParams.get('tab');
+    if (tab === 'signup' || tab === 'signin' || tab === 'reset') {
+      setActiveTab(tab);
+    }
+  }, [searchParams]);
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -99,7 +109,7 @@ export default function LoginPage() {
           <p className="text-gray-600">Your health, our priority</p>
         </div>
 
-        <Tabs defaultValue="signin" className="w-full">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="signin">Sign In</TabsTrigger>
             <TabsTrigger value="signup">Sign Up</TabsTrigger>
