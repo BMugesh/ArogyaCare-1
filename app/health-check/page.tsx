@@ -20,10 +20,12 @@ import {
   Clock,
   User,
   MessageSquare,
-  Sparkles
+  Sparkles,
+  Mic
 } from "lucide-react"
 import Navbar from "@/components/navbar"
 import Footer from "@/components/footer"
+import VapiWidget from "./VapiWidget"
 
 const translations = [
   {
@@ -88,6 +90,13 @@ const exampleQueries = [
   "Book doctor appointment",
 ]
 
+const voicePrompts = [
+  "🎤 Try saying: 'I have a fever and headache'",
+  "🎤 Voice: 'Find doctors near me'",
+  "🎤 Say: 'Book appointment for stomach pain'",
+  "🎤 Voice: 'I need emergency care'",
+]
+
 export default function HealthCheck() {
   const [input, setInput] = useState("")
   const [response, setResponse] = useState("")
@@ -100,8 +109,14 @@ export default function HealthCheck() {
   const [conversationHistory, setConversationHistory] = useState([])
   const [severity, setSeverity] = useState("")
   const [recommendations, setRecommendations] = useState([])
+  const [isVoiceMode, setIsVoiceMode] = useState(false)
   const router = useRouter()
   const messageRef = useRef(null)
+
+  // Vapi configuration - these should be environment variables in production
+  // For now using placeholder values - update these with your actual Vapi credentials
+  const VAPI_API_KEY = "your-vapi-api-key" // Replace with actual API key
+  const VAPI_ASSISTANT_ID = "your-vapi-assistant-id" // Replace with actual assistant ID
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -269,6 +284,22 @@ export default function HealthCheck() {
     setRecommendations(recs)
   }
 
+  // Voice input handlers
+  const handleVoiceTranscript = (transcript: string) => {
+    setInput(transcript)
+    // Auto-submit if user stops speaking for a moment
+    setTimeout(() => {
+      if (transcript.trim()) {
+        handleSubmit()
+      }
+    }, 1000)
+  }
+
+  const handleVoiceResponse = (response: string) => {
+    // Handle voice response from Vapi if needed
+    console.log('Voice response:', response)
+  }
+
   const getSeverityColor = (severity) => {
     switch (severity) {
       case 'high': return 'bg-red-500/20 text-red-400 border-red-500/30'
@@ -329,12 +360,23 @@ export default function HealthCheck() {
                 <div className="space-y-4">
                   <div className="relative">
                     <textarea
-                      className="w-full h-32 sm:h-40 p-4 bg-slate-900/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all resize-none"
+                      className="w-full h-32 sm:h-40 p-4 pr-16 bg-slate-900/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all resize-none"
                       placeholder={translations[index].placeholder}
                       value={input}
                       onChange={(e) => setInput(e.target.value)}
                       disabled={loading}
                     />
+                    
+                    {/* Voice Widget */}
+                    <div className="absolute top-3 right-3">
+                      <VapiWidget
+                        apiKey={VAPI_API_KEY}
+                        assistantId={VAPI_ASSISTANT_ID}
+                        onTranscript={handleVoiceTranscript}
+                        onResponse={handleVoiceResponse}
+                      />
+                    </div>
+                    
                     <div className="absolute bottom-3 right-3 text-xs text-slate-500">
                       {input.length}/500
                     </div>
@@ -362,14 +404,29 @@ export default function HealthCheck() {
 
                   {/* Example Queries */}
                   <div className="mt-4">
-                    <p className="text-sm text-slate-400 mb-2">Quick examples:</p>
+                    <div className="flex items-center gap-2 mb-2">
+                      <p className="text-sm text-slate-400">Quick examples:</p>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setIsVoiceMode(!isVoiceMode)}
+                        className="text-xs px-2 py-1 h-auto text-slate-400 hover:text-white"
+                      >
+                        <Mic className="h-3 w-3 mr-1" />
+                        {isVoiceMode ? 'Voice' : 'Text'}
+                      </Button>
+                    </div>
                     <div className="flex flex-wrap gap-2">
-                      {exampleQueries.map((query, index) => (
+                      {(isVoiceMode ? voicePrompts : exampleQueries).map((query, index) => (
                         <button
                           key={index}
-                          onClick={() => setInput(query)}
-                          className="text-xs px-3 py-1 bg-slate-700/50 text-slate-300 rounded-full hover:bg-slate-600/50 transition-colors"
-                          disabled={loading}
+                          onClick={() => !isVoiceMode && setInput(query)}
+                          className={`text-xs px-3 py-1 rounded-full transition-colors ${
+                            isVoiceMode 
+                              ? 'bg-purple-700/30 text-purple-300 cursor-default' 
+                              : 'bg-slate-700/50 text-slate-300 hover:bg-slate-600/50'
+                          }`}
+                          disabled={loading || isVoiceMode}
                         >
                           {query}
                         </button>
