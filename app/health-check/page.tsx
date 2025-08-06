@@ -75,7 +75,17 @@ const loadingMessages = [
 const healthcareTopics = [
   "symptoms", "fever", "headache", "cough", "cold", "flu", "pain", "infection",
   "medicine", "treatment", "doctor", "hospital", "health", "medical", "wellness",
-  "nutrition", "diet", "exercise", "mental health", "stress", "sleep", "fatigue"
+  "nutrition", "diet", "exercise", "mental health", "stress", "sleep", "fatigue",
+  "near me", "nearby", "appointment", "book", "schedule", "visit", "consultation"
+]
+
+const exampleQueries = [
+  "Find hospitals near me",
+  "Book appointment for fever", 
+  "Hospitals for heart treatment nearby",
+  "Schedule visit for headache",
+  "Emergency clinics in my area",
+  "Book doctor appointment",
 ]
 
 export default function HealthCheck() {
@@ -184,6 +194,13 @@ export default function HealthCheck() {
       setResponse(aiResponse)
       setSummary(aiSummary)
 
+      // Handle special actions (hospital finding, appointment booking)
+      if (data.action === 'find_hospitals' || data.action === 'book_appointment') {
+        setTimeout(() => {
+          router.push(data.redirect || '/find-doctor')
+        }, 2000) // Give user time to read the response
+      }
+
       // Extract severity and recommendations from response
       extractStructuredData(aiResponse)
 
@@ -194,7 +211,9 @@ export default function HealthCheck() {
         content: aiResponse,
         summary: aiSummary,
         timestamp: new Date(),
-        responseTime: responseTime
+        responseTime: responseTime,
+        action: data.action,
+        condition: data.condition
       }
       setConversationHistory(prev => [...prev, aiMessage])
 
@@ -321,23 +340,42 @@ export default function HealthCheck() {
                     </div>
                   </div>
 
-                  <Button
-                    className="w-full sm:w-auto bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
-                    onClick={handleSubmit}
-                    disabled={loading || !input.trim()}
-                  >
-                    {loading ? (
-                      <div className="flex items-center gap-2">
-                        <Loader2 className="h-4 w-4 animate-spin" />
-                        <span ref={messageRef}>{currentMessage}</span>
-                      </div>
-                    ) : (
-                      <div className="flex items-center gap-2">
-                        <Send className="h-4 w-4" />
-                        Get AI Health Advice
-                      </div>
-                    )}
-                  </Button>
+                  <div className="flex flex-col sm:flex-row gap-4">
+                    <Button
+                      className="flex-1 sm:flex-initial bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                      onClick={handleSubmit}
+                      disabled={loading || !input.trim()}
+                    >
+                      {loading ? (
+                        <div className="flex items-center gap-2">
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                          <span ref={messageRef}>{currentMessage}</span>
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-2">
+                          <Send className="h-4 w-4" />
+                          Get AI Health Advice
+                        </div>
+                      )}
+                    </Button>
+                  </div>
+
+                  {/* Example Queries */}
+                  <div className="mt-4">
+                    <p className="text-sm text-slate-400 mb-2">Quick examples:</p>
+                    <div className="flex flex-wrap gap-2">
+                      {exampleQueries.map((query, index) => (
+                        <button
+                          key={index}
+                          onClick={() => setInput(query)}
+                          className="text-xs px-3 py-1 bg-slate-700/50 text-slate-300 rounded-full hover:bg-slate-600/50 transition-colors"
+                          disabled={loading}
+                        >
+                          {query}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
                 </div>
               </CardContent>
             </Card>
