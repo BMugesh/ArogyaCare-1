@@ -2,7 +2,6 @@
 
 import Link from "next/link"
 import { useEffect, useState } from "react"
-import { usePathname } from "next/navigation"
 import {
   ChevronDown,
   ChevronUp,
@@ -18,9 +17,7 @@ import {
   LogIn,
   LogOut,
   User,
-  Pill,
-  Navigation,
-  AlertTriangle
+  Pill
 } from "lucide-react"
 import { useAuth } from "@/hooks/useAuth"
 import { useLanguagePreferences } from "@/hooks/useLanguagePreferences"
@@ -48,10 +45,8 @@ export default function Navbar() {
   const [indexLeft, setIndexLeft] = useState(0)
   const [indexRight, setIndexRight] = useState(0)
   const [dropdownOpen, setDropdownOpen] = useState(false) // Controls dropdown expansion
-  const [locationStatus, setLocationStatus] = useState<'granted' | 'denied' | 'pending' | null>(null)
   const { user, logout } = useAuth()
   const { preferences, loading } = useLanguagePreferences()
-  const pathname = usePathname()
 
   // Get user's languages for cycling
   const getUserLanguages = () => {
@@ -68,27 +63,6 @@ export default function Navbar() {
 
   const userTranslations = getUserLanguages()
 
-  // Check location permission when on g-map page
-  useEffect(() => {
-    if (pathname === '/g-map') {
-      setLocationStatus('pending')
-      navigator.permissions?.query({ name: 'geolocation' }).then((result) => {
-        setLocationStatus(result.state === 'granted' ? 'granted' : result.state === 'denied' ? 'denied' : 'pending')
-      }).catch(() => {
-        // Fallback: try to get location directly
-        if (navigator.geolocation) {
-          navigator.geolocation.getCurrentPosition(
-            () => setLocationStatus('granted'),
-            () => setLocationStatus('denied'),
-            { timeout: 5000 }
-          )
-        }
-      })
-    } else {
-      setLocationStatus(null)
-    }
-  }, [pathname])
-
   useEffect(() => {
     const intervalLeft = setInterval(() => {
       setIndexLeft((prevIndex) => (prevIndex + 1) % userTranslations.length)
@@ -103,9 +77,6 @@ export default function Navbar() {
       clearInterval(intervalRight)
     }
   }, [userTranslations.length])
-
-  // Helper function to check if a path is active
-  const isActivePath = (path: string) => pathname === path
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur-lg shadow-lg">
@@ -127,68 +98,35 @@ export default function Navbar() {
         <nav className="hidden lg:flex flex-1 items-center justify-center space-x-1">
           <Link
             href="/health-check"
-            className={`flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-300 group ${
-              isActivePath('/health-check') 
-                ? 'bg-blue-100 text-blue-700 border border-blue-200' 
-                : 'hover:bg-blue-50 hover:text-blue-600'
-            }`}
+            className="flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-300 hover:bg-blue-50 hover:text-blue-600 group"
           >
             <Bot className="h-4 w-4 group-hover:scale-110 transition-transform" />
             <span>AarogyaMitraAI</span>
           </Link>
           <Link
             href="/find-doctor"
-            className={`flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-300 group ${
-              isActivePath('/find-doctor') 
-                ? 'bg-green-100 text-green-700 border border-green-200' 
-                : 'hover:bg-green-50 hover:text-green-600'
-            }`}
+            className="flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-300 hover:bg-green-50 hover:text-green-600 group"
           >
             <Stethoscope className="h-4 w-4 group-hover:scale-110 transition-transform" />
             <span>ArogyaCare</span>
           </Link>
           <Link
             href="/g-map"
-            className={`flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-300 group relative ${
-              isActivePath('/g-map') 
-                ? 'bg-purple-100 text-purple-700 border border-purple-200' 
-                : 'hover:bg-purple-50 hover:text-purple-600'
-            }`}
+            className="flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-300 hover:bg-purple-50 hover:text-purple-600 group"
           >
             <MapPin className="h-4 w-4 group-hover:scale-110 transition-transform" />
             <span>AarogyaMap</span>
-            {isActivePath('/g-map') && locationStatus && (
-              <div className="absolute -top-1 -right-1">
-                {locationStatus === 'granted' && (
-                  <Navigation className="h-3 w-3 text-green-600" title="Location access granted" />
-                )}
-                {locationStatus === 'denied' && (
-                  <AlertTriangle className="h-3 w-3 text-red-600" title="Location access denied" />
-                )}
-                {locationStatus === 'pending' && (
-                  <div className="h-3 w-3 bg-yellow-500 rounded-full animate-pulse" title="Requesting location access" />
-                )}
-              </div>
-            )}
           </Link>
           <Link
             href="/news-help"
-            className={`flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-300 group ${
-              isActivePath('/news-help') 
-                ? 'bg-orange-100 text-orange-700 border border-orange-200' 
-                : 'hover:bg-orange-50 hover:text-orange-600'
-            }`}
+            className="flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-300 hover:bg-orange-50 hover:text-orange-600 group"
           >
             <Newspaper className="h-4 w-4 group-hover:scale-110 transition-transform" />
             <span>AarogyaPulse</span>
           </Link>
           <Link
             href="/health-insights"
-            className={`flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-300 group relative ${
-              isActivePath('/health-insights') 
-                ? 'bg-indigo-100 text-indigo-700 border border-indigo-200' 
-                : 'hover:bg-indigo-50 hover:text-indigo-600'
-            }`}
+            className="flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-300 hover:bg-indigo-50 hover:text-indigo-600 group relative"
           >
             <BarChart3 className="h-4 w-4 group-hover:scale-110 transition-transform" />
             <span>AarogyaView</span>
@@ -200,11 +138,7 @@ export default function Navbar() {
           </Link>
           <Link
             href="/our-team"
-            className={`flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-300 group relative ${
-              isActivePath('/our-team') 
-                ? 'bg-pink-100 text-pink-700 border border-pink-200' 
-                : 'hover:bg-pink-50 hover:text-pink-600'
-            }`}
+            className="flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-300 hover:bg-pink-50 hover:text-pink-600 group relative"
           >
             <Users className="h-4 w-4 group-hover:scale-110 transition-transform" />
             <span>AarogyaParivar</span>
@@ -216,31 +150,11 @@ export default function Navbar() {
           </Link>
           <Link
             href="/prescriptions"
-            className={`flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-300 group ${
-              isActivePath('/prescriptions') 
-                ? 'bg-purple-100 text-purple-700 border border-purple-200' 
-                : 'hover:bg-purple-50 hover:text-purple-600'
-            }`}
+            className="flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-300 hover:bg-purple-50 hover:text-purple-600 group"
           >
             <Pill className="h-4 w-4 group-hover:scale-110 transition-transform" />
             <span>ArogyaScript</span>
           </Link>
-          
-          {/* Emergency Quick Access for G-Map */}
-          {isActivePath('/g-map') && (
-            <Button
-              size="sm"
-              className="bg-red-500 hover:bg-red-600 text-white animate-pulse border border-red-400"
-              onClick={() => {
-                // This would trigger emergency facility search
-                const event = new CustomEvent('searchEmergency', { detail: 'emergency' })
-                window.dispatchEvent(event)
-              }}
-            >
-              <AlertTriangle className="h-4 w-4 mr-1" />
-              Emergency
-            </Button>
-          )}
         </nav>
 
         {/* Mobile Navigation */}
@@ -289,28 +203,11 @@ export default function Navbar() {
                 </Link>
                 <Link
                   href="/g-map"
-                  className={`flex items-center space-x-3 px-4 py-3 transition-all duration-200 ${
-                    isActivePath('/g-map')
-                      ? 'bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300 border-l-4 border-purple-500'
-                      : 'text-gray-700 dark:text-gray-200 hover:bg-purple-50 dark:hover:bg-purple-900/20 hover:text-purple-600'
-                  }`}
+                  className="flex items-center space-x-3 px-4 py-3 text-gray-700 dark:text-gray-200 hover:bg-purple-50 dark:hover:bg-purple-900/20 hover:text-purple-600 transition-all duration-200"
                   onClick={() => setDropdownOpen(false)}
                 >
                   <MapPin className="h-5 w-5" />
                   <span className="font-medium">AarogyaMap</span>
-                  {isActivePath('/g-map') && locationStatus && (
-                    <div className="ml-auto">
-                      {locationStatus === 'granted' && (
-                        <Navigation className="h-4 w-4 text-green-600" />
-                      )}
-                      {locationStatus === 'denied' && (
-                        <AlertTriangle className="h-4 w-4 text-red-600" />
-                      )}
-                      {locationStatus === 'pending' && (
-                        <div className="h-4 w-4 bg-yellow-500 rounded-full animate-pulse" />
-                      )}
-                    </div>
-                  )}
                 </Link>
                 <Link
                   href="/news-help"
