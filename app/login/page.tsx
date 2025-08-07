@@ -11,6 +11,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Eye, EyeOff, Heart } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
@@ -103,7 +104,14 @@ export default function LoginPage() {
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <div className="flex items-center justify-center mb-4">
-            <Heart className="h-8 w-8 text-blue-600 mr-2" />
+            <div className="relative h-8 w-8 mr-2">
+              <Image
+                src="/logo.jpg"
+                alt="ArogyaCare Logo"
+                fill
+                className="object-contain rounded"
+              />
+            </div>
             <h1 className="text-2xl font-bold text-gray-900">ArogyaCare</h1>
           </div>
           <p className="text-gray-600">Your health, our priority</p>

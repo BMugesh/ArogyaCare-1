@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link"
+import Image from "next/image"
 import { useEffect, useState } from "react"
 import {
   ChevronDown,
@@ -81,11 +82,17 @@ export default function Navbar() {
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur-lg shadow-lg">
       <div className="container flex h-14 sm:h-16 max-w-screen-2xl items-center justify-between px-3 sm:px-4 lg:px-8">
-        {/* Left Side: Logo with Healthcare Icon */}
+        {/* Left Side: Logo */}
         <div className="flex items-center space-x-1 sm:space-x-3 flex-shrink-0">
           <Link href="/hero" className="flex items-center space-x-1 sm:space-x-2 group">
-            <div className="p-1.5 sm:p-2 bg-gradient-to-r from-blue-500 to-green-500 rounded-lg group-hover:scale-105 transition-transform duration-300">
-              <Heart className="h-4 w-4 sm:h-5 sm:w-5 lg:h-6 lg:w-6 text-white" />
+            <div className="relative h-8 w-8 sm:h-10 sm:w-10 lg:h-12 lg:w-12 group-hover:scale-105 transition-transform duration-300">
+              <Image
+                src="/logo.jpg"
+                alt="ArogyaCare Logo"
+                fill
+                className="object-contain rounded-lg"
+                priority
+              />
             </div>
             <span className="text-base sm:text-xl lg:text-2xl xl:text-3xl font-bold bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent transition-all duration-1000 whitespace-nowrap">
               <span className="hidden sm:inline">{userTranslations[indexLeft]?.text || "ArogyaCare"}</span>
