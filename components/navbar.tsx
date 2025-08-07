@@ -267,12 +267,19 @@ export default function Navbar() {
           {/* Auth Buttons */}
           {user ? (
             <div className="flex items-center space-x-1">
-              <div className="hidden sm:flex items-center space-x-1 px-2 py-1 bg-blue-50 rounded-lg max-w-20 lg:max-w-24">
-                <User className="h-3 w-3 sm:h-4 sm:w-4 text-blue-600 flex-shrink-0" />
-                <span className="text-xs sm:text-sm text-blue-600 truncate">
-                  {user.email}
-                </span>
-              </div>
+              <Link href="/profile">
+                <div className="hidden sm:flex items-center space-x-1 px-2 py-1 bg-blue-50 rounded-lg max-w-20 lg:max-w-24 hover:bg-blue-100 transition-colors cursor-pointer">
+                  <User className="h-3 w-3 sm:h-4 sm:w-4 text-blue-600 flex-shrink-0" />
+                  <span className="text-xs sm:text-sm text-blue-600 truncate">
+                    {user.email}
+                  </span>
+                </div>
+              </Link>
+              <Link href="/profile" className="sm:hidden">
+                <Button size="sm" variant="outline" className="flex items-center space-x-1 px-2">
+                  <User className="h-3 w-3" />
+                </Button>
+              </Link>
               <Button
                 onClick={() => logout()}
                 size="sm"
