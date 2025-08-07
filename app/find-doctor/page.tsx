@@ -167,9 +167,17 @@ export default function FindDoctor() {
         isFallback: data.fallback || false
       })
     } catch (error) {
-      console.error("Error fetching hospitals:", error)
-      setHospitalResults({ error: "Failed to fetch hospitals. Please check your internet connection and try again." })
-    }
+    console.error("Error fetching hospitals:", error)
+    // Check if it's a network error
+      if (error.message && error.message.includes("fetch")) {
+          setHospitalResults({ 
+            error: "⚠️ Network connection issues detected. The system will attempt to use offline hospital database for your search.", 
+            isNetworkError: true 
+          })
+        } else {
+          setHospitalResults({ error: "Failed to fetch hospitals. Please check your internet connection and try again." })
+        }
+      }
     setLoading(false)
   }
 

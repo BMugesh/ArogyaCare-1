@@ -85,7 +85,12 @@ export default function GMap() {
       const data = await response.json()
 
       if (data.error) {
-        setError(data.error)
+        // Show more user-friendly error message for network issues
+        if (data.error.includes("Network connection failed")) {
+          setError("⚠️ Using offline hospital database due to network issues. Results may be limited but include major hospitals in your area.")
+        } else {
+          setError(data.error)
+        }
         setPlaces([])
         setFilteredPlaces([])
         return
