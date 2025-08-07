@@ -263,25 +263,6 @@ export default function Navbar() {
 
         {/* Right Side: Auth Section */}
         <div className="flex items-center space-x-1 sm:space-x-2 order-3 lg:order-none flex-shrink-0">
-          {/* Animated Greeting - Hidden on mobile when not authenticated, compact when authenticated */}
-          <div className={`hidden items-center space-x-1 sm:space-x-2 px-2 sm:px-3 py-1.5 sm:py-2 bg-gradient-to-r from-green-500 to-blue-500 rounded-lg ${user ? 'xs:flex' : 'md:flex'}`}>
-            <Heart className="h-3 w-3 sm:h-4 sm:w-4 text-white animate-pulse" />
-            <span className="text-xs sm:text-sm font-medium text-white transition-all duration-1000">
-              {userTranslations[indexRight]?.greeting || "Hello"}
-            </span>
-          </div>
-          
-          {/* Mobile-only compact greeting */}
-          <div className={`${user ? 'hidden' : 'xs:hidden'} md:hidden`}>
-            <span className="text-sm font-bold bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent transition-all duration-1000">
-              {userTranslations[indexRight]?.greeting || "Hi"}
-            </span>
-          </div>
-          
-          {/* Language Switcher - Hidden on very small screens when user is logged in */}
-          <div className={user ? 'hidden xs:block' : 'block'}>
-            <LanguageSwitcher />
-          </div>
           
           {/* Auth Buttons */}
           {user ? (
