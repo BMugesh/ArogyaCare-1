@@ -110,13 +110,7 @@ export default function Navbar() {
             <Stethoscope className="h-4 w-4 group-hover:scale-110 transition-transform" />
             <span>ArogyaCare</span>
           </Link>
-          <Link
-            href="/g-map"
-            className="flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-300 hover:bg-purple-50 hover:text-purple-600 group"
-          >
-            <MapPin className="h-4 w-4 group-hover:scale-110 transition-transform" />
-            <span>AarogyaMap</span>
-          </Link>
+
           <Link
             href="/news-help"
             className="flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-300 hover:bg-orange-50 hover:text-orange-600 group"
@@ -201,14 +195,8 @@ export default function Navbar() {
                   <Stethoscope className="h-5 w-5" />
                   <span className="font-medium">ArogyaCare</span>
                 </Link>
-                <Link
-                  href="/g-map"
-                  className="flex items-center space-x-3 px-4 py-3 text-gray-700 dark:text-gray-200 hover:bg-purple-50 dark:hover:bg-purple-900/20 hover:text-purple-600 transition-all duration-200"
-                  onClick={() => setDropdownOpen(false)}
-                >
-                  <MapPin className="h-5 w-5" />
-                  <span className="font-medium">AarogyaMap</span>
-                </Link>
+   
+
                 <Link
                   href="/news-help"
                   className="flex items-center space-x-3 px-4 py-3 text-gray-700 dark:text-gray-200 hover:bg-orange-50 dark:hover:bg-orange-900/20 hover:text-orange-600 transition-all duration-200"
