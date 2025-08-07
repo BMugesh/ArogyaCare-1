@@ -41,7 +41,18 @@ export default function GMap() {
     } else {
       setError("Geolocation is not supported")
     }
-  }, [selectedFacility])
+
+    // Listen for emergency search events from navbar
+    const handleEmergencySearch = () => {
+      setSelectedFacility('emergency')
+      if (location) {
+        fetchNearbyPlaces(location.lat, location.lng, 'emergency')
+      }
+    }
+
+    window.addEventListener('searchEmergency', handleEmergencySearch)
+    return () => window.removeEventListener('searchEmergency', handleEmergencySearch)
+  }, [selectedFacility, location])
 
   const fetchNearbyPlaces = async (lat: number, lng: number, facilityType: string) => {
     setLoading(true)
