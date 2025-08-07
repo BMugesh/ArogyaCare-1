@@ -12,7 +12,8 @@ export const API_ENDPOINTS = {
   LOCATION: `${API_BASE_URL}/location`,
   HEALTH_CHECK: `${API_BASE_URL}/health`,
   HEALTH_CENTERS: `${API_BASE_URL}/health-centers`,
-  BOOKINGS: `${API_BASE_URL}/bookings`
+  BOOKINGS: `${API_BASE_URL}/bookings`,
+  ANALYZE_PRESCRIPTION: `${API_BASE_URL}/analyze-prescription`
 }
 
 // Environment check

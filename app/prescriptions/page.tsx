@@ -3,6 +3,7 @@
 import { useState, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { useAuth } from '@/hooks/useAuth';
+import { API_ENDPOINTS } from '@/lib/config';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -25,6 +26,7 @@ import {
 } from 'lucide-react';
 import Image from 'next/image';
 import { AuthGuard } from '@/components/AuthGuard';
+import Navbar from '@/components/navbar';
 
 interface PrescriptionAnalysis {
   medications: Array<{
@@ -107,7 +109,7 @@ export default function PrescriptionsPage() {
       );
 
       // Call your existing backend API
-      const response = await fetch('http://localhost:5000/analyze-prescription', {
+      const response = await fetch(API_ENDPOINTS.ANALYZE_PRESCRIPTION, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -157,7 +159,8 @@ export default function PrescriptionsPage() {
 
   return (
     <AuthGuard>
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
+      <Navbar />
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4 pt-20">
         <div className="max-w-6xl mx-auto">
           {/* Header */}
           <div className="text-center mb-8">
