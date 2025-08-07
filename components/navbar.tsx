@@ -80,15 +80,16 @@ export default function Navbar() {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur-lg shadow-lg">
-      <div className="container flex h-16 max-w-screen-2xl items-center justify-between px-4 sm:px-6 lg:px-8">
+      <div className="container flex h-14 sm:h-16 max-w-screen-2xl items-center justify-between px-3 sm:px-4 lg:px-8">
         {/* Left Side: Logo with Healthcare Icon */}
-        <div className="flex items-center space-x-3">
-          <Link href="/hero" className="flex items-center space-x-2 group">
-            <div className="p-2 bg-gradient-to-r from-blue-500 to-green-500 rounded-lg group-hover:scale-105 transition-transform duration-300">
-              <Heart className="h-6 w-6 text-white" />
+        <div className="flex items-center space-x-1 sm:space-x-3 flex-shrink-0">
+          <Link href="/hero" className="flex items-center space-x-1 sm:space-x-2 group">
+            <div className="p-1.5 sm:p-2 bg-gradient-to-r from-blue-500 to-green-500 rounded-lg group-hover:scale-105 transition-transform duration-300">
+              <Heart className="h-4 w-4 sm:h-5 sm:w-5 lg:h-6 lg:w-6 text-white" />
             </div>
-            <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent transition-all duration-1000 sm:text-2xl lg:text-3xl">
-              {userTranslations[indexLeft]?.text || "ArogyaCare"}
+            <span className="text-base sm:text-xl lg:text-2xl xl:text-3xl font-bold bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent transition-all duration-1000 whitespace-nowrap">
+              <span className="hidden sm:inline">{userTranslations[indexLeft]?.text || "ArogyaCare"}</span>
+              <span className="sm:hidden">AC</span>
             </span>
           </Link>
         </div>
@@ -157,17 +158,17 @@ export default function Navbar() {
         </nav>
 
         {/* Mobile Navigation */}
-        <div className="relative lg:hidden">
+        <div className="relative lg:hidden order-2">
           <button
             type="button"
             onClick={() => setDropdownOpen(!dropdownOpen)}
-            className="flex items-center space-x-2 px-3 py-2 rounded-lg bg-gradient-to-r from-blue-500 to-green-500 text-white font-medium transition-all duration-300 hover:shadow-lg"
-            aria-expanded={dropdownOpen}
+            className="flex items-center space-x-1 px-2 sm:px-3 py-2 rounded-lg bg-gradient-to-r from-blue-500 to-green-500 text-white font-medium transition-all duration-300 hover:shadow-lg"
+            aria-expanded={dropdownOpen.toString()}
             aria-controls="mobile-menu"
             aria-label="Toggle navigation menu"
           >
-            {dropdownOpen ? <X size={18} /> : <Menu size={18} />}
-            <span className="hidden sm:inline text-sm">Menu</span>
+            {dropdownOpen ? <X size={16} className="sm:w-4 sm:h-4" /> : <Menu size={16} className="sm:w-4 sm:h-4" />}
+            <span className="hidden xs:inline text-xs sm:text-sm">Menu</span>
           </button>
 
           {dropdownOpen && (
@@ -181,7 +182,7 @@ export default function Navbar() {
               {/* Menu */}
               <div
                 id="mobile-menu"
-                className="absolute top-12 right-0 w-72 sm:w-80 bg-white dark:bg-gray-800 shadow-2xl rounded-xl border border-gray-200 dark:border-gray-700 z-50 overflow-hidden"
+                className="absolute top-12 right-0 w-64 xs:w-72 sm:w-80 bg-white dark:bg-gray-800 shadow-2xl rounded-xl border border-gray-200 dark:border-gray-700 z-50 overflow-hidden max-h-[calc(100vh-5rem)] overflow-y-auto"
               >
                 <div className="py-2">
                 <Link
@@ -261,29 +262,33 @@ export default function Navbar() {
         </div>
 
         {/* Right Side: Auth Section */}
-        <div className="flex items-center space-x-2">
-          {/* Animated Greeting */}
-          <div className="hidden sm:flex items-center space-x-2 px-3 py-2 bg-gradient-to-r from-green-500 to-blue-500 rounded-lg">
-            <Heart className="h-4 w-4 text-white animate-pulse" />
-            <span className="text-sm font-medium text-white transition-all duration-1000">
-              {userTranslations[indexRight]?.greeting || "Hello"}
-            </span>
-          </div>
-          <div className="sm:hidden">
-            <span className="text-lg font-bold bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent transition-all duration-1000">
+        <div className="flex items-center space-x-1 sm:space-x-2 order-3 lg:order-none flex-shrink-0">
+          {/* Animated Greeting - Hidden on mobile when not authenticated, compact when authenticated */}
+          <div className={`hidden items-center space-x-1 sm:space-x-2 px-2 sm:px-3 py-1.5 sm:py-2 bg-gradient-to-r from-green-500 to-blue-500 rounded-lg ${user ? 'xs:flex' : 'md:flex'}`}>
+            <Heart className="h-3 w-3 sm:h-4 sm:w-4 text-white animate-pulse" />
+            <span className="text-xs sm:text-sm font-medium text-white transition-all duration-1000">
               {userTranslations[indexRight]?.greeting || "Hello"}
             </span>
           </div>
           
-          {/* Language Switcher */}
-          <LanguageSwitcher />
+          {/* Mobile-only compact greeting */}
+          <div className={`${user ? 'hidden' : 'xs:hidden'} md:hidden`}>
+            <span className="text-sm font-bold bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent transition-all duration-1000">
+              {userTranslations[indexRight]?.greeting || "Hi"}
+            </span>
+          </div>
+          
+          {/* Language Switcher - Hidden on very small screens when user is logged in */}
+          <div className={user ? 'hidden xs:block' : 'block'}>
+            <LanguageSwitcher />
+          </div>
           
           {/* Auth Buttons */}
           {user ? (
-            <div className="flex items-center space-x-2">
-              <div className="hidden sm:flex items-center space-x-2 px-2 py-1 bg-blue-50 rounded-lg">
-                <User className="h-4 w-4 text-blue-600" />
-                <span className="text-sm text-blue-600 max-w-24 truncate">
+            <div className="flex items-center space-x-1">
+              <div className="hidden sm:flex items-center space-x-1 px-2 py-1 bg-blue-50 rounded-lg max-w-20 lg:max-w-24">
+                <User className="h-3 w-3 sm:h-4 sm:w-4 text-blue-600 flex-shrink-0" />
+                <span className="text-xs sm:text-sm text-blue-600 truncate">
                   {user.email}
                 </span>
               </div>
@@ -291,17 +296,17 @@ export default function Navbar() {
                 onClick={() => logout()}
                 size="sm"
                 variant="outline"
-                className="flex items-center space-x-1"
+                className="flex items-center space-x-1 px-2 sm:px-3"
               >
-                <LogOut className="h-4 w-4" />
-                <span className="hidden sm:inline">Sign Out</span>
+                <LogOut className="h-3 w-3 sm:h-4 sm:w-4" />
+                <span className="hidden sm:inline text-xs sm:text-sm">Out</span>
               </Button>
             </div>
           ) : (
             <Link href="/login">
-              <Button size="sm" className="flex items-center space-x-1">
-                <LogIn className="h-4 w-4" />
-                <span className="hidden sm:inline">Sign In</span>
+              <Button size="sm" className="flex items-center space-x-1 px-2 sm:px-3">
+                <LogIn className="h-3 w-3 sm:h-4 sm:w-4" />
+                <span className="hidden xs:inline text-xs sm:text-sm">Sign In</span>
               </Button>
             </Link>
           )}

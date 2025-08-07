@@ -115,8 +115,8 @@ export default function HealthCheck() {
 
   // Vapi configuration - these should be environment variables in production
   // For now using placeholder values - update these with your actual Vapi credentials
-  const VAPI_API_KEY = "your-vapi-api-key" // Replace with actual API key
-  const VAPI_ASSISTANT_ID = "your-vapi-assistant-id" // Replace with actual assistant ID
+  const VAPI_API_KEY = "739aa734-ef8e-423b-879f-0ad3e34bea8c" // Replace with actual API key
+  const VAPI_ASSISTANT_ID = "3ab445d9-f053-4a30-ab6b-57d88c156379" // Replace with actual assistant ID
 
   useEffect(() => {
     const interval = setInterval(() => {
