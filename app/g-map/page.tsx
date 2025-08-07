@@ -175,195 +175,185 @@ export default function GMap() {
   }, [places, selectedFacility, distanceFilter, searchTerm, sortBy])
 
   return (
-    <div className="relative z-10 flex flex-col items-center justify-center p-6 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white min-h-screen">
-      <Navbar className="fixed top-0 left-0 w-full bg-black shadow-md z-50" />
+    <div className="relative min-h-screen">
+      {/* Background gradients */}
+      <div className="pointer-events-none fixed inset-0">
+        <div className="absolute inset-0 bg-gradient-to-b from-background via-background/90 to-background" />
+        <div className="absolute right-0 top-0 h-[500px] w-[500px] bg-blue-500/10 blur-[100px] sm:h-[300px] sm:w-[300px]" />
+        <div className="absolute bottom-0 left-0 h-[500px] w-[500px] bg-purple-500/10 blur-[100px] sm:h-[300px] sm:w-[300px]" />
+      </div>
 
-      <h1 className="text-3xl font-bold mb-6 pt-20 text-white text-center">Accessible Healthcare Locations</h1>
+      <div className="relative z-10">
+        <Navbar />
+        
+        <div className="flex flex-col items-center justify-center p-6 text-foreground min-h-screen">
+          <h1 className="text-3xl font-bold mb-6 pt-20 text-center">Accessible Healthcare Locations</h1>
 
       {error && <p className="text-red-500 mb-4 text-center">{error}</p>}
       {loading && <p className="text-blue-400 mb-4 text-center">🔍 Searching for healthcare facilities...</p>}
 
-      {/* Advanced Filters Section */}
-      <div className="w-full max-w-6xl mb-6 bg-gray-800 rounded-lg p-4 border border-gray-700">
-        <h2 className="text-xl font-semibold mb-4 text-white">🔧 Search & Filter Options</h2>
+          {/* Advanced Filters Section */}
+          <div className="w-full max-w-6xl mb-6 bg-card rounded-lg p-4 border">
+            <h2 className="text-xl font-semibold mb-4">🔧 Search & Filter Options</h2>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {/* Search Input */}
-          <div>
-            <label htmlFor="search" className="block text-sm font-medium text-gray-300 mb-1">
-              🔍 Search by Name
-            </label>
-            <input
-              id="search"
-              type="text"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Search facilities..."
-              className="w-full p-2 border border-gray-600 rounded-lg bg-gray-900 text-white placeholder-gray-400"
-            />
-          </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              {/* Search Input */}
+              <div>
+                <label htmlFor="search" className="block text-sm font-medium text-muted-foreground mb-1">
+                  🔍 Search by Name
+                </label>
+                <input
+                  id="search"
+                  type="text"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  placeholder="Search facilities..."
+                  className="w-full p-2 border rounded-lg bg-background text-foreground placeholder-muted-foreground"
+                />
+              </div>
 
-          {/* Facility Type Filter */}
-          <div>
-            <label htmlFor="facility-type" className="block text-sm font-medium text-gray-300 mb-1">
-              🏥 Facility Type
-            </label>
-            <select
-              id="facility-type"
-              value={selectedFacility}
-              onChange={(e) => setSelectedFacility(e.target.value)}
-              className="w-full p-2 border border-gray-600 rounded-lg bg-gray-900 text-white"
-            >
-              <option value="all">All Types</option>
-              <option value="hospital">🏥 Hospitals</option>
-              <option value="clinic">🏢 Clinics</option>
-              <option value="doctor">👨‍⚕️ Doctors</option>
-              <option value="pharmacy">💊 Pharmacies</option>
-              <option value="emergency">🚨 Emergency</option>
-              <option value="medical">⚕️ General Medical</option>
-            </select>
-          </div>
+              {/* Facility Type Filter */}
+              <div>
+                <label htmlFor="facility-type" className="block text-sm font-medium text-muted-foreground mb-1">
+                  🏥 Facility Type
+                </label>
+                <select
+                  id="facility-type"
+                  value={selectedFacility}
+                  onChange={(e) => setSelectedFacility(e.target.value)}
+                  className="w-full p-2 border rounded-lg bg-background text-foreground"
+                >
+                  <option value="all">All Types</option>
+                  <option value="hospital">🏥 Hospitals</option>
+                  <option value="clinic">🏢 Clinics</option>
+                  <option value="doctor">👨‍⚕️ Doctors</option>
+                  <option value="pharmacy">💊 Pharmacies</option>
+                  <option value="emergency">🚨 Emergency</option>
+                  <option value="medical">⚕️ General Medical</option>
+                </select>
+              </div>
 
-          {/* Distance Filter */}
-          <div>
-            <label htmlFor="distance" className="block text-sm font-medium text-gray-300 mb-1">
-              📍 Max Distance: {distanceFilter}km
-            </label>
-            <input
-              id="distance"
-              type="range"
-              min="1"
-              max="50"
-              value={distanceFilter}
-              onChange={(e) => setDistanceFilter(Number(e.target.value))}
-              className="w-full"
-            />
-            <div className="flex justify-between text-xs text-gray-400 mt-1">
-              <span>1km</span>
-              <span>50km</span>
-            </div>
-          </div>
-
-          {/* Sort Options */}
-          <div>
-            <label htmlFor="sort" className="block text-sm font-medium text-gray-300 mb-1">
-              📊 Sort By
-            </label>
-            <select
-              id="sort"
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value)}
-              className="w-full p-2 border border-gray-600 rounded-lg bg-gray-900 text-white"
-            >
-              <option value="distance">📏 Distance</option>
-              <option value="name">🔤 Name</option>
-            </select>
-          </div>
-        </div>
-
-        {/* Results Summary */}
-        <div className="mt-4 pt-3 border-t border-gray-700">
-          <p className="text-sm text-gray-300">
-            📋 Showing <span className="text-blue-400 font-semibold">{filteredPlaces.length}</span> out of{" "}
-            <span className="text-green-400 font-semibold">{places.length}</span> healthcare facilities
-            {searchTerm && <span className="text-yellow-400"> matching "{searchTerm}"</span>}
-          </p>
-        </div>
-      </div>
-
-      {/* Update the map and places list for better responsiveness */}
-      <div className="flex flex-col md:flex-row w-full max-w-7xl mt-4 gap-4 sm:gap-6">
-        {/* Map Section (Left) */}
-        {isMounted && location && (
-          <div className="w-full md:w-[55%] h-[350px] sm:h-[450px] md:h-[550px] rounded-lg overflow-hidden shadow-lg">
-            <LeafletMap 
-              latitude={location.lat} 
-              longitude={location.lng} 
-              healthCenters={filteredPlaces}
-              className="w-full h-full rounded-lg border border-gray-700"
-            />
-          </div>
-        )}
-
-        {/* Places List (Right) */}
-        <div className="w-full md:w-[45%] h-[350px] sm:h-[450px] md:h-[550px] overflow-y-auto custom-scrollbar">
-          {filteredPlaces.length === 0 ? (
-            <div className="flex flex-col items-center justify-center h-full text-gray-400">
-              <p className="text-lg mb-2">🔍 No facilities found</p>
-              <p className="text-sm text-center">Try adjusting your filters or search terms</p>
-            </div>
-          ) : (
-            <ul className="space-y-3 sm:space-y-4 p-2 sm:p-4">
-              {filteredPlaces.map((place, index) => (
-              <li
-                key={index}
-                className="border border-gray-700 p-3 sm:p-5 rounded-lg bg-black shadow-lg hover:shadow-xl transition-all"
-              >
-                <div className="flex flex-col">
-                  <div className="flex items-center gap-2 mb-2">
-                    <strong className="text-base sm:text-lg md:text-xl font-semibold text-blue-400">{place.name}</strong>
-                    <span className="px-2 py-1 text-xs bg-gray-700 rounded-full text-gray-300">
-                      {place.type === 'hospital' ? '🏥' : 
-                       place.type === 'clinic' ? '🏢' :
-                       place.type === 'doctor' ? '👨‍⚕️' :
-                       place.type === 'pharmacy' ? '💊' :
-                       place.type === 'emergency' ? '🚨' : '⚕️'} {place.type}
-                    </span>
-                  </div>
-                  <p className="text-sm sm:text-base md:text-lg italic text-gray-300">{place.vicinity}</p>
-                  <p className="text-xs sm:text-sm text-gray-400">📍 {place.distance.toFixed(2)} km away</p>
-
-                  {/* View on OpenStreetMap Link */}
-                  <a
-                    href={place.mapsLink}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-blue-500 hover:underline mt-2 text-xs sm:text-sm"
-                  >
-                    View on OpenStreetMap
-                  </a>
-
-                  {/* Visit Website Link (if available) */}
-                  {place.website && (
-                    <a
-                      href={place.website}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-blue-500 hover:underline mt-1 text-xs sm:text-sm"
-                    >
-                      Visit Website
-                    </a>
-                  )}
+              {/* Distance Filter */}
+              <div>
+                <label htmlFor="distance" className="block text-sm font-medium text-muted-foreground mb-1">
+                  📍 Max Distance: {distanceFilter}km
+                </label>
+                <input
+                  id="distance"
+                  type="range"
+                  min="1"
+                  max="50"
+                  value={distanceFilter}
+                  onChange={(e) => setDistanceFilter(Number(e.target.value))}
+                  className="w-full"
+                />
+                <div className="flex justify-between text-xs text-muted-foreground mt-1">
+                  <span>1km</span>
+                  <span>50km</span>
                 </div>
-              </li>
-              ))}
-            </ul>
-          )}
+              </div>
+
+              {/* Sort Options */}
+              <div>
+                <label htmlFor="sort" className="block text-sm font-medium text-muted-foreground mb-1">
+                  📊 Sort By
+                </label>
+                <select
+                  id="sort"
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                  className="w-full p-2 border rounded-lg bg-background text-foreground"
+                >
+                  <option value="distance">📏 Distance</option>
+                  <option value="name">🔤 Name</option>
+                </select>
+              </div>
+            </div>
+
+            {/* Results Summary */}
+            <div className="mt-4 pt-3 border-t">
+              <p className="text-sm text-muted-foreground">
+                📋 Showing <span className="text-blue-500 font-semibold">{filteredPlaces.length}</span> out of{" "}
+                <span className="text-green-500 font-semibold">{places.length}</span> healthcare facilities
+                {searchTerm && <span className="text-yellow-500"> matching "{searchTerm}"</span>}
+              </p>
+            </div>
+          </div>
+
+          {/* Update the map and places list for better responsiveness */}
+          <div className="flex flex-col md:flex-row w-full max-w-7xl mt-4 gap-4 sm:gap-6">
+            {/* Map Section (Left) */}
+            {isMounted && location && (
+              <div className="w-full md:w-[55%] h-[350px] sm:h-[450px] md:h-[550px] rounded-lg overflow-hidden shadow-lg">
+                <LeafletMap 
+                  latitude={location.lat} 
+                  longitude={location.lng} 
+                  healthCenters={filteredPlaces}
+                  className="w-full h-full rounded-lg border"
+                />
+              </div>
+            )}
+
+            {/* Places List (Right) */}
+            <div className="w-full md:w-[45%] h-[350px] sm:h-[450px] md:h-[550px] overflow-y-auto custom-scrollbar">
+              {filteredPlaces.length === 0 ? (
+                <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
+                  <p className="text-lg mb-2">🔍 No facilities found</p>
+                  <p className="text-sm text-center">Try adjusting your filters or search terms</p>
+                </div>
+              ) : (
+                <ul className="space-y-3 sm:space-y-4 p-2 sm:p-4">
+                  {filteredPlaces.map((place, index) => (
+                  <li
+                    key={index}
+                    className="border p-3 sm:p-5 rounded-lg bg-card shadow-lg hover:shadow-xl transition-all"
+                  >
+                    <div className="flex flex-col">
+                      <div className="flex items-center gap-2 mb-2">
+                        <strong className="text-base sm:text-lg md:text-xl font-semibold text-blue-500">{place.name}</strong>
+                        <span className="px-2 py-1 text-xs bg-muted rounded-full text-muted-foreground">
+                          {place.type === 'hospital' ? '🏥' : 
+                           place.type === 'clinic' ? '🏢' :
+                           place.type === 'doctor' ? '👨‍⚕️' :
+                           place.type === 'pharmacy' ? '💊' :
+                           place.type === 'emergency' ? '🚨' : '⚕️'} {place.type}
+                        </span>
+                      </div>
+                      <p className="text-sm sm:text-base md:text-lg italic text-muted-foreground">{place.vicinity}</p>
+                      <p className="text-xs sm:text-sm text-muted-foreground">📍 {place.distance.toFixed(2)} km away</p>
+
+                      {/* View on OpenStreetMap Link */}
+                      <a
+                        href={place.mapsLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-500 hover:underline mt-2 text-xs sm:text-sm"
+                      >
+                        View on OpenStreetMap
+                      </a>
+
+                      {/* Visit Website Link (if available) */}
+                      {place.website && (
+                        <a
+                          href={place.website}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-500 hover:underline mt-1 text-xs sm:text-sm"
+                        >
+                          Visit Website
+                        </a>
+                      )}
+                    </div>
+                  </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          </div>
         </div>
       </div>
 
-      <Footer className="w-full bg-black text-gray-400 mt-10" />
-
-      <style jsx>{`
-        /* Custom scrollbar styles */
-        .custom-scrollbar::-webkit-scrollbar {
-          width: 8px;
-        }
-
-        .custom-scrollbar::-webkit-scrollbar-track {
-          background: #1f1f1f;
-          border-radius: 10px;
-        }
-
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: #888;
-          border-radius: 10px;
-        }
-
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-          background: #555;
-        }
-      `}</style>
+      <Footer />
     </div>
   )
 }
