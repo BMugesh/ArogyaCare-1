@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import { useRouter } from "next/navigation"
-import { Search, MapPin, Building2, Users, Star, Phone, Clock, Filter, Hospital, Calendar } from "lucide-react"
+import { Search, MapPin, Building2, Users, Star, Phone, Clock, Filter, Hospital, Calendar, Navigation, Loader2 } from "lucide-react"
 import Navbar from "@/components/navbar"
 import Footer from "@/components/footer"
 import Link from "next/link"
@@ -31,6 +31,9 @@ export default function FindDoctor() {
   const [selectedHospital, setSelectedHospital] = useState(null)
   const [showBookingModal, setShowBookingModal] = useState(false)
   const [bookings, setBookings] = useState([])
+  const [userLocation, setUserLocation] = useState({ lat: null, lng: null })
+  const [locationLoading, setLocationLoading] = useState(false)
+  const [useCurrentLocation, setUseCurrentLocation] = useState(false)
   const router = useRouter()
 
   // Medical specialties for better hospital matching
@@ -64,6 +67,48 @@ export default function FindDoctor() {
     return ""
   }
 
+  // Get user's current location
+  const getCurrentLocation = async () => {
+    setLocationLoading(true)
+    
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const coords = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude
+          }
+          setUserLocation(coords)
+          setUseCurrentLocation(true)
+          setLocationLoading(false)
+          
+          // Auto-fill location if empty
+          if (!location.trim()) {
+            setLocation("Current Location")
+          }
+        },
+        (error) => {
+          console.error("Geolocation error:", error)
+          setLocationLoading(false)
+          // Show user-friendly error
+          if (error.code === error.PERMISSION_DENIED) {
+            setHospitalResults({ error: "Location access denied. Please enable location permissions or enter your location manually." })
+          } else {
+            setHospitalResults({ error: "Unable to detect location. Please enter your location manually." })
+          }
+        },
+        { 
+          enableHighAccuracy: true, 
+          timeout: 10000, 
+          maximumAge: 300000 // 5 minutes cache
+        }
+      )
+    } else {
+      setLocationLoading(false)
+      setHospitalResults({ error: "Geolocation is not supported by this browser." })
+    }
+  }
+
   const handleFindHospitals = async () => {
     if (!location.trim()) return
 
@@ -71,15 +116,24 @@ export default function FindDoctor() {
     setHospitalResults(null)
     
     try {
-      // Call the real hospital API
+      // Prepare request payload with optional coordinates
+      const requestBody = { 
+        condition: condition,
+        location: location,
+        specialty: selectedSpecialty 
+      }
+
+      // Include user coordinates for better distance calculation
+      if (userLocation.lat && userLocation.lng) {
+        requestBody.latitude = userLocation.lat
+        requestBody.longitude = userLocation.lng
+      }
+
+      // Call the enhanced hospital API
       const res = await fetch(API_ENDPOINTS.HOSPITALS, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ 
-          condition: condition,
-          location: location,
-          specialty: selectedSpecialty 
-        }),
+        body: JSON.stringify(requestBody),
       })
 
       const data = await res.json()
@@ -88,29 +142,33 @@ export default function FindDoctor() {
         throw new Error(data.error)
       }
 
-      // Process the API response
+      // Process the API response with enhanced data
       const hospitalsWithDistance = data.hospitals.map(hospital => ({
         name: hospital.name,
         address: hospital.address,
-        specialties: hospital.specialties,
-        rating: hospital.rating,
+        specialties: hospital.specialties || ["General Medicine"],
+        rating: hospital.rating || 4.0,
         distance: hospital.distance,
-        phone: hospital.phone,
-        type: hospital.type,
-        availability: hospital.availability,
-        description: hospital.description,
-        beds: hospital.beds,
-        established: hospital.established
+        phone: hospital.phone || "",
+        type: hospital.type || "Hospital",
+        availability: hospital.availability || "24/7",
+        description: hospital.description || `Healthcare facility in ${data.searchLocation || location}`,
+        beds: hospital.beds || "Available",
+        established: hospital.established || "Established"
       }))
 
       setHospitalResults({ 
         hospitals: hospitalsWithDistance, 
         suggestedSpecialty: data.suggestedSpecialty,
-        totalFound: data.totalFound
+        totalFound: data.totalFound,
+        searchLocation: data.searchLocation,
+        userCoordinates: data.userCoordinates,
+        isNearbySearch: data.fromNearbySearch || false,
+        isFallback: data.fallback || false
       })
     } catch (error) {
       console.error("Error fetching hospitals:", error)
-      setHospitalResults({ error: "Failed to fetch hospitals. Please try again." })
+      setHospitalResults({ error: "Failed to fetch hospitals. Please check your internet connection and try again." })
     }
     setLoading(false)
   }
@@ -152,13 +210,28 @@ export default function FindDoctor() {
               />
             </div>
 
-            <div>
+            <div className="relative">
               <input
-                className="w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg bg-gray-800 text-white placeholder-gray-400 border border-gray-700 text-sm sm:text-base focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                className="w-full px-3 sm:px-4 py-2 sm:py-3 pr-12 rounded-lg bg-gray-800 text-white placeholder-gray-400 border border-gray-700 text-sm sm:text-base focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
                 placeholder="Enter your location..."
                 value={location}
                 onChange={(e) => setLocation(e.target.value)}
               />
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                className="absolute right-1 top-1/2 transform -translate-y-1/2 h-8 w-8 p-0 hover:bg-blue-600/20"
+                onClick={getCurrentLocation}
+                disabled={locationLoading}
+                title="Use current location"
+              >
+                {locationLoading ? (
+                  <Loader2 size={16} className="animate-spin text-blue-400" />
+                ) : (
+                  <Navigation size={16} className={`${useCurrentLocation ? 'text-green-400' : 'text-blue-400'}`} />
+                )}
+              </Button>
             </div>
 
             <div>
@@ -262,15 +335,22 @@ export default function FindDoctor() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-blue-400">
                   <Hospital className="h-6 w-6" />
-                  Nearby Hospitals
+                  {hospitalResults.isNearbySearch ? "Nearby Healthcare Facilities" : "Hospitals in Your Area"}
                   {hospitalResults.suggestedSpecialty && (
                     <Badge className="ml-2 bg-blue-600 text-white text-xs">
                       Specialized in {hospitalResults.suggestedSpecialty}
                     </Badge>
                   )}
+                  {hospitalResults.userCoordinates && (
+                    <Badge className="ml-2 bg-green-600 text-white text-xs">
+                      📍 GPS Located
+                    </Badge>
+                  )}
                 </CardTitle>
                 <CardDescription className="text-gray-400">
-                  Found {hospitalResults.hospitals.length} hospitals in your area
+                  Found {hospitalResults.hospitals.length} {hospitalResults.isNearbySearch ? "healthcare facilities" : "hospitals"} 
+                  {hospitalResults.userCoordinates ? " sorted by distance from your location" : " in your area"}
+                  {hospitalResults.isFallback && " (using fallback search)"}
                 </CardDescription>
               </CardHeader>
               <CardContent>

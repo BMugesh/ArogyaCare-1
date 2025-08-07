@@ -35,18 +35,36 @@ export default function GMap() {
           setLocation({ lat, lng })
           fetchNearbyPlaces(lat, lng, selectedFacility)
         },
-        () => setError("Location access denied"),
-        { enableHighAccuracy: true },
+        (error) => {
+          console.error("Geolocation error:", error)
+          if (error.code === error.PERMISSION_DENIED) {
+            setError("Location access denied. Please enable location permissions to find nearby healthcare facilities.")
+          } else if (error.code === error.POSITION_UNAVAILABLE) {
+            setError("Location information unavailable. Please check your device settings.")
+          } else {
+            setError("Location request timed out. Please refresh the page and try again.")
+          }
+        },
+        { enableHighAccuracy: true, timeout: 15000, maximumAge: 600000 }, // 10 minutes cache
       )
     } else {
-      setError("Geolocation is not supported")
+      setError("Geolocation is not supported by this browser.")
     }
   }, [selectedFacility])
+
+  // Re-fetch when distance filter changes significantly
+  useEffect(() => {
+    if (location && location.lat && location.lng) {
+      fetchNearbyPlaces(location.lat, location.lng, selectedFacility)
+    }
+  }, [distanceFilter])
 
   const fetchNearbyPlaces = async (lat: number, lng: number, facilityType: string) => {
     setLoading(true)
     try {
       setError(null) // Clear previous errors
+      
+      // Enhanced request with more parameters
       const response = await fetch(API_ENDPOINTS.HEALTH_CENTERS, {
         method: 'POST',
         headers: {
@@ -55,6 +73,8 @@ export default function GMap() {
         body: JSON.stringify({
           latitude: lat,
           longitude: lng,
+          max_distance: distanceFilter, // Use current distance filter
+          max_results: 50, // Get more results for filtering
         }),
       })
       
@@ -71,6 +91,7 @@ export default function GMap() {
         return
       }
 
+      // Handle enhanced API response
       if (data.nearest_health_centers && data.nearest_health_centers.length > 0) {
         const placesWithDistance = data.nearest_health_centers
           .map((place: any) => ({
@@ -78,16 +99,26 @@ export default function GMap() {
             vicinity: place.address,
             lat: place.latitude,
             lng: place.longitude,
-            distance: place.distance || getDistance(lat, lng, place.latitude, place.longitude),
+            distance: place.distance, // Already calculated by backend
             mapsLink: `https://www.openstreetmap.org/?mlat=${place.latitude}&mlon=${place.longitude}&zoom=16`,
-            type: determineFacilityType(place.name, place.address),
+            type: place.type || determineFacilityType(place.name, place.address),
+            phone: place.phone || "",
+            website: place.website || "",
+            opening_hours: place.opening_hours || "",
+            osm_id: place.osm_id || "",
           }))
+          .filter(place => place.distance <= distanceFilter) // Filter by distance
           .sort((a, b) => a.distance - b.distance)
 
         setPlaces(placesWithDistance)
         setFilteredPlaces(placesWithDistance)
+        
+        // Log search metadata for debugging
+        if (data.search_metadata) {
+          console.log("Search metadata:", data.search_metadata)
+        }
       } else if (Array.isArray(data) && data.length > 0) {
-        // Handle direct array response
+        // Handle legacy direct array response
         const placesWithDistance = data
           .map((place: any) => ({
             name: place.name,
@@ -96,20 +127,24 @@ export default function GMap() {
             lng: place.longitude,
             distance: place.distance || getDistance(lat, lng, place.latitude, place.longitude),
             mapsLink: `https://www.openstreetmap.org/?mlat=${place.latitude}&mlon=${place.longitude}&zoom=16`,
-            type: determineFacilityType(place.name, place.address),
+            type: place.type || determineFacilityType(place.name, place.address),
+            phone: place.phone || "",
+            website: place.website || "",
+            opening_hours: place.opening_hours || "",
           }))
+          .filter(place => place.distance <= distanceFilter)
           .sort((a, b) => a.distance - b.distance)
 
         setPlaces(placesWithDistance)
         setFilteredPlaces(placesWithDistance)
       } else {
-        setError("No health centers found in your area. Please try again or check your location settings.")
+        setError("No health centers found in your area. Try expanding your search radius or check your location settings.")
         setPlaces([])
         setFilteredPlaces([])
       }
     } catch (error) {
       console.error("Error fetching health centers:", error)
-      setError("Unable to fetch health centers. Please check if the backend server is running.")
+      setError("Unable to fetch health centers. Please check your internet connection and try again.")
       setPlaces([])
       setFilteredPlaces([])
     } finally {
@@ -322,27 +357,45 @@ export default function GMap() {
                       <p className="text-sm sm:text-base md:text-lg italic text-muted-foreground">{place.vicinity}</p>
                       <p className="text-xs sm:text-sm text-muted-foreground">📍 {place.distance.toFixed(2)} km away</p>
 
-                      {/* View on OpenStreetMap Link */}
-                      <a
-                        href={place.mapsLink}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-blue-500 hover:underline mt-2 text-xs sm:text-sm"
-                      >
-                        View on OpenStreetMap
-                      </a>
+                      {/* Additional Information */}
+                      {place.phone && (
+                        <p className="text-xs sm:text-sm text-muted-foreground">📞 {place.phone}</p>
+                      )}
+                      {place.opening_hours && (
+                        <p className="text-xs sm:text-sm text-muted-foreground">🕒 {place.opening_hours}</p>
+                      )}
 
-                      {/* Visit Website Link (if available) */}
-                      {place.website && (
+                      {/* Action Links */}
+                      <div className="flex flex-wrap gap-2 mt-2">
                         <a
-                          href={place.website}
+                          href={place.mapsLink}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-blue-500 hover:underline mt-1 text-xs sm:text-sm"
+                          className="text-blue-500 hover:underline text-xs sm:text-sm"
                         >
-                          Visit Website
+                          🗺️ View on Map
                         </a>
-                      )}
+                        
+                        {place.website && (
+                          <a
+                            href={place.website}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-blue-500 hover:underline text-xs sm:text-sm"
+                          >
+                            🌐 Website
+                          </a>
+                        )}
+                        
+                        {place.phone && (
+                          <a
+                            href={`tel:${place.phone}`}
+                            className="text-green-500 hover:underline text-xs sm:text-sm"
+                          >
+                            📞 Call
+                          </a>
+                        )}
+                      </div>
                     </div>
                   </li>
                   ))}
